@@ -36,3 +36,4 @@ other waybars other than island were acquired from the waybar examples page!
 
 Thanks to
 - [saneaspect] (https://github.com/saneaspect) for yt videos to learn how to set up hyprland efficiently!
+- [ilyamiro] (https://github.com/ilyamiro) current quickshell config!
