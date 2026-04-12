@@ -1,1 +1,0 @@
-../.config/hypr/scripts/volume_listener.sh

@@ -1,1 +1,0 @@
-../.config/waybar/scripts/switch-layout.sh

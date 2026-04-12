@@ -1,1 +1,0 @@
-../.config/hypr/scripts/power-profiles.sh

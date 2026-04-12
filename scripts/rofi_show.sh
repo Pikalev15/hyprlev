@@ -1,1 +1,0 @@
-../.config/hypr/scripts/rofi_show.sh

@@ -1,1 +1,0 @@
-../.config/hypr/scripts/qs_manager.sh

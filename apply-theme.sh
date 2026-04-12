@@ -1,1 +1,0 @@
-.config/themes/apply-theme.sh

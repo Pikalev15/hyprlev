@@ -1,1 +1,0 @@
-../.config/hypr/scripts/bluetooth_mgr.sh
