@@ -1,0 +1,1 @@
+../.config/hypr/scripts/reload_config.sh

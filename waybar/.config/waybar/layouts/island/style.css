@@ -1,0 +1,188 @@
+@import "colors/colors.css";
+
+* {
+    border: none;
+    border-radius: 0px;
+    font-family: "Rubik", monospace;
+    font-size: 15px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.modules-center {
+    background: @bg0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+window#waybar {
+    background: transparent;
+}
+
+tooltip {
+    background: @bg2;
+    border: 1px solid @bg3;
+    border-radius: 12px;
+}
+
+tooltip label {
+    color: @fg;
+    padding: 6px;
+}
+
+#workspaces {
+    background: transparent;
+    padding: 0;
+    margin: 0 10px 0 10px;
+    border: none;
+    box-shadow: none;
+}
+
+#workspaces button {
+    padding: 0px 4px;
+    margin: 0px 2px;
+    border-radius: 10px;
+    color: @grey0;
+    background: transparent;
+    transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+    background: linear-gradient(135deg, @blue 0%, @purple 50%, @red 100%);
+    color: @bg0;
+    min-width: 40px;
+    transition: all 0.3s ease-in-out;
+}
+
+#workspaces button:hover {
+    background-color: @bg3;
+    color: @fg;
+}
+
+#workspaces button.urgent {
+    background-color: @red;
+    color: @bg0;
+}
+
+#battery,
+#pulseaudio,
+#backlight,
+#custom-pacman,
+#network,
+#clock,
+#custom-weather,
+#custom-media,
+#window,
+#custom-launcher,
+#custom-notification,
+#submap,
+#power-profiles-daemon,
+#custom-home-folder,
+#bluetooth,
+#custom-power {
+    background-color: @bg0;
+    padding: 0 6px;
+    margin: 0 5px;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+}
+
+#submap {
+    color: @aqua;
+}
+
+#custom-launcher {
+    color: @fg;
+}
+
+#clock {
+    color: @fg;
+    margin: 0;
+}
+
+#custom-media {
+    color: @aqua;
+    margin: 0 0 0 10px;
+}
+
+#custom-weather {
+    color: @yellow;
+}
+
+#custom-notification {
+    color: @fg;
+}
+
+#custom-pacman {
+    color: @green;
+}
+
+#custom-home-folder {
+    color: @fg;
+}
+
+#network {
+    color: @blue;
+}
+
+#bluetooth {
+    color: @blue;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.charging {
+    color: @aqua;
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+}
+
+#pulseaudio {
+    color: @fg;
+}
+
+#pulseaudio.muted {
+    color: @grey0;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#power-profiles-daemon {
+    color: @orange;
+}
+
+#custom-power {
+    color: @red;
+    margin: 0 0 0 10px;
+}
+
+#tray {
+    padding: 0 6px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @red;
+}
+
+/* vswaybar:modpad */
+#clock, #cpu, #memory, #network, #pulseaudio, #battery, #tray,
+#custom-updates, #custom-weather, #custom-swaync, #custom-power {
+    padding: 0 10px;
+}
+#custom-arch {
+    padding: 0 10px 0 15px;
+}

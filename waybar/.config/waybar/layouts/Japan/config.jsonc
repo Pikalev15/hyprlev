@@ -1,0 +1,34 @@
+{
+  "style": "~/.config/waybar/layouts/Japan/style.css",
+  
+  "layer": "top",
+  "position": "top",
+  "height": 40,
+  
+  "modules-left": [
+    "custom/launcher",
+    "hyprland/workspaces",
+    "custom/weather",
+    "custom/updates",
+    "custom/cava"
+  ],
+  
+  "modules-center": [
+    "memory",
+    "cpu",
+    "temperature"
+  ],
+  
+  "modules-right": [
+    "idle_inhibitor",
+    "battery",
+    "backlight",
+    "pulseaudio",
+    "network",
+    "clock",
+    "custom/notification",
+    "tray"
+  ],
+
+  "include": "~/.config/waybar/layouts/Japan/modules.jsonc"
+}

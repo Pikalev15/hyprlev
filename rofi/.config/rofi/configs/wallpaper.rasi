@@ -1,0 +1,100 @@
+@import "colors/nord.rasi"
+
+* {
+    background-color: transparent;
+    text-color:       @fg;
+    font:             "JetBrains Mono 10";
+}
+
+window {
+    background-color: @bg0;
+    border:           1px;
+    border-color:     @aqua;
+    border-radius:    10px;
+    width:            860px;
+    padding:          0px;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [ inputbar, listview ];
+    spacing:          0px;
+}
+
+inputbar {
+    background-color: @bg1;
+    border:           0px 0px 1px 0px;
+    border-color:     @bg3;
+    padding:          10px 16px;
+    margin:           0px;
+    children:         [ prompt, textbox-prompt-colon, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @aqua;
+    font:             "JetBrains Mono Bold 10";
+}
+
+textbox-prompt-colon {
+    background-color: transparent;
+    text-color:       @grey0;
+    expand:           false;
+    str:              " ";
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Search wallpapers...";
+    placeholder-color: @grey0;
+}
+
+listview {
+    background-color: transparent;
+    padding:          12px;
+    spacing:          10px;
+    scrollbar:        false;
+    lines:            1;
+    columns:          4;
+    layout:           vertical;
+    fixed-height:     false;
+}
+
+element {
+    background-color: transparent;
+    padding:          8px;
+    border-radius:    8px;
+    margin:           0px;
+    orientation:      vertical;
+    spacing:          6px;
+    cursor:           pointer;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element selected.normal {
+    background-color: @bg2;
+    text-color:       @fg;
+    border:           2px;
+    border-color:     @aqua;
+    border-radius:    8px;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             180px;
+    border-radius:    6px;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.5;
+    cursor:           inherit;
+}

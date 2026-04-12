@@ -1,0 +1,1 @@
+.config/quickshell/Bar.qml

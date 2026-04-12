@@ -1,0 +1,1 @@
+../.config/hypr/scripts/close_eww.sh

@@ -1,0 +1,1 @@
+../.config/waybar/scripts/layout-picker.sh

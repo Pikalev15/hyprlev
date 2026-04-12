@@ -1,0 +1,188 @@
+{
+	"position": "top",
+	"layer": "top",
+	"height": 16,
+	"margin-top": 10,
+	"margin-bottom": 0,
+	"margin-left": 0,
+	"margin-right": 0,
+	"modules-center": [
+		"custom/launcher",
+		"hyprland/workspaces",
+		"custom/pacman",
+		"tray",
+		"custom/media",
+		"network",
+		"bluetooth",
+		"pulseaudio",
+		"battery",
+		"clock",
+		"custom/notification",
+		"custom/power"
+	],
+	"hyprland/submap": {
+		"format": "{}",
+		"tooltip": false
+	},
+	"hyprland/workspaces": {
+		"format": "{icon}",
+		"format-icons": {
+			"1": "1",
+			"2": "2",
+			"3": "3",
+			"4": "4",
+			"5": "5",
+			"6": "6",
+			"7": "7",
+			"8": "8",
+			"9": "9",
+			"10": "10",
+			"default": "d",
+			"urgent": "u"
+		},
+		"on-click": "activate",
+		"on-scroll-down": "hyprctl dispatch workspace e+1",
+		"on-scroll-up": "hyprctl dispatch workspace e-1",
+		"persistent-workspaces": {
+			"*": 5
+		}
+	},
+	"custom/weather": {
+		"exec": "~/.config/waybar/layouts/island/scripts/get-weather.sh 2>/dev/null",
+		"return-type": "json",
+		"interval": 1800,
+		"format": "{}"
+	},
+	"custom/notification": {
+		"tooltip": true,
+		"tooltip-format": "Left Click: Launch Swaync\nRight Click: Do not Disturb",
+		"format": "{icon}",
+		"format-icons": {
+			"notification": "󰂚",
+			"none": "󰂜",
+			"dnd-notification": "󰂛",
+			"dnd-none": "󰂜",
+			"inhibited-notification": "󰂚",
+			"inhibited-none": "󰂜",
+			"dnd-inhibited-notification": "󰂛",
+			"dnd-inhibited-none": "󰂛"
+		},
+		"return-type": "json",
+		"exec-if": "which swaync-client",
+		"exec": "swaync-client -swb",
+		"on-click": "sleep 0.1 && swaync-client -t -sw",
+		"on-click-right": "swaync-client -d -sw",
+		"escape": true
+	},
+	"custom/launcher": {
+		"format": "󰣖",
+		"on-click": "bash ~/.config/waybar/layouts/island/scripts/app-launcher.sh",
+		"tooltip-format": "Launch your favorite apps"
+	},
+	"custom/media": {
+		"format": "{}",
+		"escape": true,
+		"return-type": "json",
+		"max-length": 40,
+		"on-click": "playerctl play-pause",
+		"on-click-right": "playerctl stop",
+		"smooth-scrolling-threshold": 1,
+		"on-scroll-up": "playerctl next",
+		"on-scroll-down": "playerctl previous",
+		"exec": "$HOME/.config/waybar/layouts/island/scripts/mediaplayer.py 2> /dev/null"
+	},
+	"custom/pacman": {
+		"format": "󰮯 {}",
+		"interval": "once",
+		"exec": "checkupdates | wc -l",
+		"on-click": "kitty --hold yay -Syu",
+		"signal": 8,
+		"tooltip-format": "{} updates available"
+	},
+	"custom/home-folder": {
+		"format": "󰋜 {}",
+		"interval": "once",
+		"exec": "ls -l ~ | wc -l",
+		"on-click": "kitty --hold ls -l",
+		"tooltip-format": "{} total files and folders in /"
+	},
+	"battery": {
+		"format": "{icon}",
+		"format-charging": "󰂄 {capacity}%",
+		"format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰂂"],
+		"tooltip-format": "Battery is at {capacity}%",
+		"on-click": "notify-send 'Battery' \"$(cat /sys/class/power_supply/BAT0/capacity)% - $(cat /sys/class/power_supply/BAT0/status)\n$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep 'time to' | xargs)\""
+	},
+	"pulseaudio": {
+		"format": "{icon}",
+		"format-bluetooth": " {volume}%",
+		"format-muted": "󰖁",
+		"scroll-step": 1,
+		"on-click": "pavucontrol",
+		"ignored-sinks": ["Easy Effects Sink"],
+		"format-icons": {
+			"headphone": "󰋋",
+			"hands-free": "󰋌",
+			"headset": "󰋎",
+			"phone": "󰏲",
+			"portable": "󰏲",
+			"car": "󰄋",
+			"default": ["󰖁" ,"󰕿", "󰖀", "󰕾"]
+		},
+		"tooltip-format": "Volume: {volume}%"
+	},
+	"network": {
+		"interface": "wlan0",
+		"format": "{ifname}",
+		"format-wifi": "{icon}",
+		"format-ethernet": "󰈀 {ipaddr}/{cidr}",
+		"format-disconnected": "󰤭",
+		"on-click": "nmgui",
+		"max-length": 50,
+		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+		"tooltip-format": "Connected:{essid}"
+	},
+	"clock": {
+		"format": " {:%I:%M %p}",
+		"interval": 1,
+		"tooltip-format": "<tt>{calendar}</tt>",
+		"calendar": {
+			"format": {
+				"today": "<span color='#ff0000'><b>{}</b></span>"
+			}
+		},
+		"actions": {
+			"on-click-right": "shift_down",
+			"on-click": "shift_up"
+		}
+	},
+	"power-profiles-daemon": {
+		"format": "{icon}",
+		"tooltip-format": "Power mode: {profile}",
+		"tooltip": true,
+		"format-icons": {
+			"default": "󰾅",
+			"performance": "󰾆",
+			"balanced": "󰾅",
+			"power-saver": "󰾊"
+		}
+	},
+	"bluetooth": {
+		"format": "󰂯",
+		"format-disabled": "󰂲",
+		"format-connected": "󰂱 {num_connections}",
+		"tooltip-format": "{controller_alias}\t{controller_address}",
+		"tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+		"tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+		"on-click": "overskride"
+	},
+	"custom/power": {
+		"format": "󰐥",
+		"on-click": "wlogout",
+		"tooltip-format": "Power Menu"
+	},
+	"tray": {
+		"icon-size": 16,
+		"spacing": 8
+	}
+}

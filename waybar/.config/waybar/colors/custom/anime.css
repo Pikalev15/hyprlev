@@ -1,0 +1,25 @@
+/* Komorebi - 木漏れ日
+ * "Sunlight filtering through leaves"
+ * A fusion of Catppuccin Mocha's pastel warmth
+ * and Tokyo Night's urban blue-purple glow
+ */
+
+@define-color bg0  #1a1b26;
+@define-color bg1  #1e2030;
+@define-color bg2  #24283b;
+@define-color bg3  #313244;
+@define-color bg4  #414868;
+
+@define-color fg     #cdd6f4;
+@define-color red    #f7768e;
+@define-color orange #fab387;
+@define-color yellow #e0af68;
+@define-color green  #9ece6a;
+@define-color aqua   #94e2d5;
+@define-color blue   #7aa2f7;
+@define-color purple #bb9af7;
+@define-color pink   #f5c2e7;
+
+@define-color grey0  #565f89;
+@define-color grey1  #7f849c;
+@define-color grey2  #6c7086;

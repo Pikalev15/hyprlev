@@ -1,0 +1,44 @@
+/* Launch: nwg-dock-hyprland -i 24 -w 5 -ml 10 -mr 10 -mb 10 -x -a start -c "/bin/bash /home/lev15/.config/hypr/scripts/rofi-toggle.sh" */
+
+window {
+  background: none;
+	border-radius: 10px;
+	border-style: none;
+	border-width: 1px;
+	border-color: rgba(156, 142, 122, 0.5)
+ }
+
+#box {
+  /* Define attributes of the box surrounding icons here */
+  padding: 5px
+}
+
+#active {
+	/* This is to underline the button representing the currently active window */
+	border-bottom: solid 1px;
+	border-color: #FFFFFF
+}
+
+button, image {
+	background: none;
+	border-style: none;
+	box-shadow: none;
+	color: #999
+}
+
+button {
+	padding: 4px;
+	margin-left: 4px;
+	margin-right: 4px;
+	color: #eee;
+  font-size: 12px
+}
+
+button:hover {
+	background-color: rgba(255, 255, 255, 0.20);
+	border-radius: 2px;
+}
+
+button:focus {
+	box-shadow: none
+}

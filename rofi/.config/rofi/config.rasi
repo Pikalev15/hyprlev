@@ -1,0 +1,59 @@
+@import "colors/tokyo-night.rasi"
+
+* {
+    background-color: transparent;
+    text-color:       @fg;
+    font:             "JetBrains Mono 11";
+}
+
+window {
+    background-color: @bg0;
+    location:         south;
+    anchor:           south;
+    width:            50%;
+    border-radius:    12px;
+    padding:          20px;
+    margin:           0px 0px 20px 0px;
+}
+
+mainbox {
+    spacing: 15px;
+}
+
+inputbar {
+    background-color: @bg2;
+    border-radius:    8px;
+    padding:          12px;
+}
+
+prompt {
+    enabled: false;
+}
+
+entry {
+    placeholder:       "Type to search...";
+    placeholder-color: @grey0;
+}
+
+listview {
+    scrollbar: false;
+    spacing:   8px;
+    lines:     6;
+}
+
+element {
+    border-radius:    8px;
+    padding:          10px;
+    spacing:          10px;
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element selected {
+    background-color: @bg3;
+    text-color:       @fg;
+}
+
+element-icon {
+    size: 32px;
+}

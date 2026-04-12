@@ -1,0 +1,1 @@
+.config/themes/wallpaper-selector.sh
