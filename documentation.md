@@ -49,6 +49,11 @@ key combinations for different actions.
 | volume mute | XF86AudioMute |
 | brightness up | XF86MonBrightnessUp |
 | brightness down | XF86MonBrightnessDown |
+| reload config | super + alt + r |
+| browse configs | super + c |
+| wlogout | XF86Sleep |
+| hyprlock | XF86Sleep Press and hold |
+
 
 <h3>Workspaces Based</h3>
 
@@ -57,6 +62,8 @@ key combinations for different actions.
 | close app | super + q |
 | switch workspace| super + 1-9 |
 | move to workspace | super + shift + 1-9 |
+| toggle float | super + f |
+| hyprexpo (overview) | XF86LaunchA |
 
 <h3>Aesthetics</h3>
 
@@ -65,3 +72,6 @@ key combinations for different actions.
 | switch theme | super + U |
 | switch wallpaper | super + shift + u |
 | switch top bar | super + alt + u |
+
+| Task | keybind |
+| - | - |
