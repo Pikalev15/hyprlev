@@ -18,10 +18,12 @@ other waybars other than island were acquired from the waybar examples page!
 
 # Instructions
 To run the quickshell config by ilyamiro, run
+
 quickshell -p ~/.config/hypr/scripts/quickshell/Main.qml & disown
 quickshell -p ~/.config/hypr/scripts/quickshell/TopBar.qml & disown
 
 To run my quickshell config, run
+
 quickshell -p ~/quickshell/bar
 
 On default, ilyamiro's config is attached to autostart.conf. To switch to waybar or quickshell, for now you have to manually update the autostart.conf
