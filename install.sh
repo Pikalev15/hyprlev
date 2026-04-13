@@ -9,7 +9,7 @@ ask() { read -p "$(echo -e "${CYAN}$1${RESET} [y/N] ")" ans; [[ "$ans" =~ ^[Yy]$
 info() { echo -e "${GREEN}==>${RESET} ${BOLD}$1${RESET}"; }
 warn() { echo -e "${YELLOW}[!]${RESET} $1"; }
 
-# ── Ping counter (uses countapi.xyz, free, no signup) ───────────
+# ── Ping counter ────────────────────────────────────────────────
 curl -s "https://hits.sh/github.com/Pikalev15/hyprlev" > /dev/null 2>&1 &
 
 clear
