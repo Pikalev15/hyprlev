@@ -5,50 +5,39 @@
     text-color:       @fg;
     font:             "JetBrains Mono 11";
 }
-
 window {
-    background-color: @bg0;
-    border:           1px;
-    border-color:     @bg3;
-    border-radius:    8px;
-    width:            320px;
+    background-color: #0f1419ee;
+    border:           0px;
+    border-radius:    12px;
+    width:            500px;      /* narrower */
+    height:           300px;
     padding:          6px 0px;
 }
-
 mainbox {
     background-color: transparent;
     children:         [ inputbar, listview ];
     spacing:          0px;
 }
-
 inputbar {
-    background-color: @bg1;
-    border:           0px 0px 1px 0px;
-    border-color:     @bg3;
-    padding:          9px 14px;
-    margin:           0px 0px 4px 0px;
-    children:         [ prompt, textbox-prompt-colon, entry ];
+    padding:          9px 14px;   /* match element height */
+    margin:           0px 0px 2px 0px;
 }
-
 prompt {
     background-color: transparent;
-    text-color:       @grey0;
+    text-color:       @green;
 }
-
 textbox-prompt-colon {
     background-color: transparent;
     text-color:       @grey0;
     expand:           false;
     str:              " ";
 }
-
 entry {
     background-color: transparent;
-    text-color:       @fg;
+    text-color:       @grey0;
     placeholder:      "Search...";
     placeholder-color: @grey0;
 }
-
 listview {
     background-color: transparent;
     padding:          4px 0px;
@@ -56,32 +45,28 @@ listview {
     scrollbar:        false;
     lines:            8;
 }
-
 element {
     background-color: transparent;
-    padding:          10px 16px;
-    border-radius:    4px;
-    margin:           0px 6px;
+    padding:          9px 14px;   /* less tall */
+    border-radius:    0px;
+    margin:           0px;
 }
-
 element normal.normal {
     background-color: transparent;
     text-color:       @fg;
 }
-
 element selected.normal {
-    background-color: @bg2;
+    background-color: #1e3a2acc;
     text-color:       @fg;
 }
-
 element-text {
     background-color: transparent;
     text-color:       inherit;
     vertical-align:   0.5;
 }
-
 element-icon {
     background-color: transparent;
-    size:             24px;
+    size:             20px;
+    spacing:          10px;
     border-radius:    4px;
 }
