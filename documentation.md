@@ -37,5 +37,8 @@ key combinations for different actions.
 | turn off hyprsunset (after 9:00) | super + alt + s |
 
 <h3>Quickshell keybinds for ilyamiro config<h3>
+
+| Task | keybind |
+| - | - |
 | monitor menu | super + M |
 | wallpaper menu | super + alt + W |
