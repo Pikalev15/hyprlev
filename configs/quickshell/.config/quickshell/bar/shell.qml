@@ -1,4 +1,4 @@
-// shell.qml — Quickshell entry point
+// shell.qml
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
@@ -11,18 +11,10 @@ ShellRoot {
             id: bar
             required property var modelData
             screen: modelData
-
-            anchors {
-                top: true
-                left: true
-                right: true
-            }
-
-            // Taller to give the island breathing room
+            anchors { top: true; left: true; right: true }
             height: 42
             color: "transparent"
             exclusiveZone: height
-
             WlrLayershell.namespace: "bar"
             WlrLayershell.layer: WlrLayer.Top
 

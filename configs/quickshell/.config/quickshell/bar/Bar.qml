@@ -7,19 +7,14 @@ Item {
     id: root
     required property var screen
 
-    // ── Single island pill ────────────────────────────────────────
     Rectangle {
         id: island
-
         anchors.centerIn: parent
         height: 28
-        // Width hugs content + padding
         width: inner.implicitWidth + 24
         radius: height / 2
-
         color: Qt.rgba(0.08, 0.08, 0.11, 0.90)
 
-        // Subtle border
         Rectangle {
             anchors.fill: parent
             radius: parent.radius
@@ -33,34 +28,15 @@ Item {
             anchors.centerIn: parent
             spacing: 10
 
-            // Left: settings gear
             SettingsButton {}
-
-            // Divider
             Rectangle { width: 1; height: 14; color: Qt.rgba(1,1,1,0.1) }
-
-            // Center: workspaces
             Workspaces {}
-
-            // Divider
             Rectangle { width: 1; height: 14; color: Qt.rgba(1,1,1,0.1) }
-
-            // Right: system tray
             SystemTray {}
-
-            // Divider
             Rectangle { width: 1; height: 14; color: Qt.rgba(1,1,1,0.1) }
-
-            // Clock
             Clock {}
-
-            // Divider
             Rectangle { width: 1; height: 14; color: Qt.rgba(1,1,1,0.1) }
-
-            // Notification bell
             NotificationBell {}
-
-            // Power
             PowerButton {}
         }
     }

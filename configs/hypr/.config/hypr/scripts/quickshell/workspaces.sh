@@ -31,7 +31,7 @@ fi
 # ---------------------------------------------
 
 # Configuration: How many workspaces do you want to show?
-SEQ_END=8
+SEQ_END=10
 
 print_workspaces() {
     # Get raw data with a timeout fallback

@@ -1,0 +1,13 @@
+BarTooltip 1.0 BarTooltip.qml
+WorkspaceButton 1.0 WorkspaceButton.qml
+Workspaces 1.0 Workspaces.qml
+SystemTray 1.0 SystemTray.qml
+ResourceIndicator 1.0 ResourceIndicator.qml
+NetworkIcon 1.0 NetworkIcon.qml
+AudioIcon 1.0 AudioIcon.qml
+BatteryIcon 1.0 BatteryIcon.qml
+Clock 1.0 Clock.qml
+SettingsButton 1.0 SettingsButton.qml
+NotificationBell 1.0 NotificationBell.qml
+PowerButton 1.0 PowerButton.qml
+TrayIcon 1.0 TrayIcon.qml

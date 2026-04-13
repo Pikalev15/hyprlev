@@ -23,7 +23,7 @@ other waybars other than island were acquired from the waybar examples page!
  - [ ] set up html on start
  - [ ] make proper windowrules
  - [ ] proper cliphist setup
-
+ - [ ] finish proper quickshell
 
 # Progress
 - [x] Hyprland
@@ -33,6 +33,7 @@ other waybars other than island were acquired from the waybar examples page!
 - [x] Swaync
 - [x] Wlogout
 - [x] nwg-dock-hyprland
+
 
 Thanks to
 - [saneaspect] (https://github.com/saneaspect) for yt videos to learn how to set up hyprland efficiently!
