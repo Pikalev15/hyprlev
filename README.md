@@ -1,3 +1,12 @@
+
+
+██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗     ███████╗██╗   ██╗"
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔════╝██║   ██║
+███████║ ╚████╔╝ ██████╔╝██████╔╝██║     █████╗  ██║   ██║
+██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══╝  ╚██╗ ██╔╝
+██║  ██║   ██║   ██║     ██║  ██║███████╗███████╗ ╚████╔╝ 
+╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝  ╚═══╝  
+
 <h1 align="center">HYPRLEV</h1>
 
 <h4 align="center">
@@ -64,7 +73,6 @@ Thanks to
 - [saneaspect] (https://github.com/saneaspect) for yt videos to learn how to set up hyprland efficiently!
 - [ilyamiro] (https://github.com/ilyamiro) current quickshell config!
 
-# hyprlev
+# misc
 ![Hits](https://hits.sh/github.com/Pikalev15/hyprlev.svg)
 
-Levi's Hyprland dotfiles...
