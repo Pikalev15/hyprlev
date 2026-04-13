@@ -28,9 +28,6 @@ key combinations for different actions.
 | browser | super + b |
 | file manager (nautilus) | super + e |
 | terminal | super + t |
-| close app | super + q |
-| switch workspace| super + 1-9 |
-| move to workspace | super + shift + 1-9 |
 | switch theme | super + U |
 | switch wallpaper | super + shift + u |
 | switch top bar | super + alt + u |
@@ -42,3 +39,29 @@ key combinations for different actions.
 | - | - |
 | monitor menu | super + M |
 | wallpaper menu | super + alt + W |
+
+<h3>Miscellaneous Keybinds</h3>
+
+| Task | keybind |
+| - | - |
+| volume up | XF86AudioRaiseVolume |
+| volume down | XF86AudioLowerVolume |
+| volume mute | XF86AudioMute |
+| brightness up | XF86MonBrightnessUp |
+| brightness down | XF86MonBrightnessDown |
+
+<h3>Workspaces Based</h3>
+
+| Task | keybind |
+| - | - |
+| close app | super + q |
+| switch workspace| super + 1-9 |
+| move to workspace | super + shift + 1-9 |
+
+<h3>Aesthetics</h3>
+
+| Task | keybind |
+| - | - |
+| switch theme | super + U |
+| switch wallpaper | super + shift + u |
+| switch top bar | super + alt + u |
