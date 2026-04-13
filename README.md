@@ -1,4 +1,4 @@
-<h1> align="center">HYPRLEV</h1>
+<h1 align="center">HYPRLEV</h1>
 
 <h4 align="center">
   <a href="https://github.com/Pikalev15/hyprlev/blob/main/documentation.md">Check out the documentation!</a><br><br>
