@@ -2,7 +2,7 @@ my first dotfiles!
 
 dont worry about shit hardware, im running my entire hyprland in a chromebook of a 128 gig usb
 
-too lazy to set up a .sh script that'll come later
+finally set up my sh script!
 
 shoutout to claude for troubleshooting
 
@@ -54,3 +54,8 @@ On default, ilyamiro's config is attached to autostart.conf. To switch to waybar
 Thanks to
 - [saneaspect] (https://github.com/saneaspect) for yt videos to learn how to set up hyprland efficiently!
 - [ilyamiro] (https://github.com/ilyamiro) current quickshell config!
+
+# hyprlev
+![Hits](https://hits.sh/github.com/Pikalev15/hyprlev.svg)
+
+Levi's Hyprland dotfiles...

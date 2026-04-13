@@ -10,7 +10,7 @@ info() { echo -e "${GREEN}==>${RESET} ${BOLD}$1${RESET}"; }
 warn() { echo -e "${YELLOW}[!]${RESET} $1"; }
 
 # ── Ping counter (uses countapi.xyz, free, no signup) ───────────
-curl -s "https://api.countapi.xyz/hit/Pikalev15/hyprlev-installs" > /dev/null 2>&1 &
+curl -s "https://hits.sh/github.com/Pikalev15/hyprlev" > /dev/null 2>&1 &
 
 clear
 echo -e "${BOLD}${CYAN}"
@@ -23,6 +23,7 @@ echo "  ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚
 echo -e "${RESET}"
 echo -e "  ${BOLD}Levi's Hyprland Dotfiles${RESET} — github.com/Pikalev15/hyprlev"
 echo ""
+
 
 # ── Sudo ────────────────────────────────────────────────────────
 info "Requesting sudo..."
