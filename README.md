@@ -10,7 +10,7 @@ other waybars other than island were acquired from the waybar examples page!
 
 # Installation
 
-'sh <(curl -s https://raw.githubusercontent.com/Pikalev15/hyprlev/main/install.sh)'
+' sh <(curl -s https://raw.githubusercontent.com/Pikalev15/hyprlev/main/install.sh )'
 
 # Features
 - Full theme switcher intergration
