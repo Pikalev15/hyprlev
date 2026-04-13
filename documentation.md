@@ -15,7 +15,7 @@ key combinations for different actions.
 
 <br>
 
-<b>Note</b><br>`super` is the windows key. Don't be confused
+<b>Note</b><br>`super` is the windows key
 
 <br>
 <br>
@@ -24,18 +24,18 @@ key combinations for different actions.
 
 | Task | keybind |
 | - | - |
+| rofi | super |
 | browser | super + b |
 | file manager (nautilus) | super + e |
 | terminal | super + t |
 | close app | super + q |
 | switch workspace| super + 1-9 |
 | move to workspace | super + shift + 1-9 |
-| rofi | super |
 | switch theme | super + U |
 | switch wallpaper | super + shift + u |
 | switch top bar | super + alt + u |
 | turn off hyprsunset (after 9:00) | super + alt + s |
-| Launch music client | super + s |
-| Execute color picker | super + r |
-|  | super + d |
 
+<h3>Quickshell keybinds for ilyamiro config<h3>
+| monitor menu | super + M |
+| wallpaper menu | super + alt + W |
