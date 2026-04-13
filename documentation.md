@@ -11,8 +11,7 @@
 key combinations for different actions.
 </p>
 
-<div align=center>
-
+<br>
 <br>
 
 <b>Note</b><br>`super` is the windows key
