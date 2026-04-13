@@ -7,6 +7,6 @@ declare -A options=(
     ["  Config Browser"]="$HOME/.config/rofi/scripts/config-browser.sh"
 )
 
-selected=$(printf '%s\n' "${!options[@]}" | sort | rofi -dmenu -p "  Menu" -theme ~/.config/rofi/configs/minimal.rasi)
+selected=$(printf '%s\n' "${!options[@]}" | sort | rofi -dmenu -i -p "Select Wallpaper" -show-icons -theme ~/.config/rofi/configs/minimal.rasi)
 
 [[ -n "$selected" ]] && bash "${options[$selected]}"
