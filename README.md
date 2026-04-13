@@ -2,6 +2,7 @@
 
 <h4 align="center">
   <a href="https://github.com/Pikalev15/hyprlev/blob/main/documentation.md">Check out the documentation!</a><br><br>
+</h4>
 
 my first dotfiles!
 
