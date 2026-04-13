@@ -64,6 +64,7 @@ key combinations for different actions.
 | move to workspace | super + shift + 1-9 |
 | toggle float | super + f |
 | hyprexpo (overview) | XF86LaunchA |
+| snappy switcher | alt + tab |
 
 <h3>Aesthetics</h3>
 
@@ -73,5 +74,3 @@ key combinations for different actions.
 | switch wallpaper | super + shift + u |
 | switch top bar | super + alt + u |
 
-| Task | keybind |
-| - | - |
