@@ -1,3 +1,8 @@
+<h2 align="center">HYPRLEV</h2>
+
+<h4 align="center">
+  <a href="https://github.com/Pikalev15/hyprlev/blob/main/documentation.md">Check out the documentation!</a><br><br>
+
 my first dotfiles!
 
 dont worry about shit hardware, im running my entire hyprland in a chromebook of a 128 gig usb
