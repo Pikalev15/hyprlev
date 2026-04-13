@@ -7,6 +7,7 @@ neofetch
 
 # fish
 fish_add_path ~/go/bin
+fish_add_path ~/.cargo/bin
 
 end
 
