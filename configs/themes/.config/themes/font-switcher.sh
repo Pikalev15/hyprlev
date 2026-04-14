@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+FONT_CACHE="$HOME/.cache/current-ui-font"
+fonts="SF Pro Display\nSF Pro Text\nGoogle Sans\nGoogle Sans Flex\nPlus Jakarta Sans\nRubik\nQuicksand\nManrope\nRoboto"
+
+# Get current font (default to SF Pro Text if not set)
+current_font=$(cat "$FONT_CACHE" 2>/dev/null || echo "SF Pro Text")
+
+# First, choose which app to configure
+apps="GTK 3/4\nWaybar\nRofi\nHyprland\nAll\nSwayNC"
+
+chosen_app=$(echo -e "$apps" | sort | rofi -dmenu -i -p "App" -theme ~/.config/rofi/configs/minimal.rasi)
+[[ -z "$chosen_app" ]] && exit 0
+
+# Then, choose the font
+chosen_font=$(echo -e "$fonts" | sort | rofi -dmenu -i -p "Font" -theme ~/.config/rofi/configs/minimal.rasi)
+[[ -z "$chosen_font" ]] && exit 0
+
+apply_gtk() {
+    if [[ $chosen_font == "Roboto" ]]; then
+        gsettings set org.gnome.desktop.interface font-name "$chosen_font 12"
+    else
+        gsettings set org.gnome.desktop.interface font-name "$chosen_font 11.5"
+    fi
+}
+
+apply_waybar() {
+    sed -i 's/font-family: "[^"]*",/font-family: "'"$chosen_font"'",/' ~/.config/waybar/style.css
+    pkill waybar && waybar &
+}
+
+apply_rofi() {
+    sed -i "s/font: \"[^\"]*\"/font: \"$chosen_font Medium 12\"/" ~/.local/share/rofi/themes/fonts.rasi
+}
+apply_hyprland() {
+    sed -i "s/\$FONT_FAMILY = .*/\$FONT_FAMILY = $chosen_font/" ~/.config/hypr/hyprlock.conf
+    hyprctl reload
+}
+
+apply_swaync() {
+    sed -i 's/font-family: "[^"]*",/font-family: "'"$chosen_font"'",/' ~/.config/swaync/components/control-center.css;
+    killall -9 swaync; swaync &
+}
+
+case "$chosen_app" in
+    "GTK 3/4")
+        apply_gtk
+        ;;
+    "Waybar")
+        apply_waybar
+        ;;
+    "Rofi")
+        apply_rofi
+        ;;
+    "Hyprland")
+        apply_hyprland
+        ;;
+    "SwayNC")
+        apply_swaync
+        ;;
+    "All")
+        apply_gtk
+        apply_waybar
+        apply_rofi
+        apply_hyprland
+        apply_swaync
+        ;;
+esac
+
+# Save the new font as current
+echo "$chosen_font" > "$FONT_CACHE"
