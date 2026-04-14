@@ -82,6 +82,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: "CPU: " + Math.round(root.cpuPercent) + "%\nRAM: " + root.ramUsedMb + " / " + root.ramTotalMb + " MB"
         show: root.hovered
         anchors.top: parent.bottom

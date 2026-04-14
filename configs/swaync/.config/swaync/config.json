@@ -38,6 +38,8 @@
   "widgets": [
     "label",
     "buttons-grid",
+    "volume",
+    "backlight",
     "mpris",
     "title",
     "dnd",
@@ -64,6 +66,10 @@
       "label": "󰕾",
       "show-per-app": true
     },
+    "backlight": {
+      "label": "☼",
+      "show-per-app": true
+    },	
     "buttons-grid": {
       "actions": [
         {

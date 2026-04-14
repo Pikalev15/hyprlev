@@ -1,5 +1,11 @@
 <h1 align="center">HYPRLEV</h1>
 
+<a href="https://github.com/Pikalev15/hyprlev/stargazers"><img src="https://img.shields.io/github/stars/Pikalev15/hyprlev?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=C9CBFF&labelColor=302D41" alt="stars"></a>&nbsp;&nbsp;
+<a href="https://github.com/Pikalev15/hyprlev/forks"><img src="https://img.shields.io/github/forks/Pikalev15/hyprlev?style=for-the-badge&logo=git&logoColor=f9e2af&label=Forks&labelColor=302D41&color=f9e2af" alt="forks"></a>&nbsp;&nbsp;
+<a href="https://github.com/Pikalev15/hyprlev/issues"><img src="https://img.shields.io/github/issues/Pikalev15/hyprlev?style=for-the-badge&logo=github&logoColor=eba0ac&label=Issues&labelColor=302D41&color=eba0ac" alt="issues"></a>&nbsp;&nbsp;
+<a href="https://github.com/Pikalev15/hyprlev/commits/main"><img src="https://img.shields.io/github/last-commit/Pikalev15/hyprlev?style=for-the-badge&logo=github&logoColor=white&label=Last%20Commit&labelColor=302D41&color=A6E3A1" alt="last commit"></a>&nbsp;&nbsp;
+<a href="https://github.com/Pikalev15/hyprlev/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Pikalev15/hyprlev?style=for-the-badge&logo=open-source-initiative&color=CBA6F7&logoColor=CBA6F7&labelColor=302D41" alt="license"></a>&nbsp;&nbsp;
+
 <h4 align="center">
   <a href="https://github.com/Pikalev15/hyprlev/blob/main/documentation.md">Check out the documentation!</a><br><br>
 </h4>

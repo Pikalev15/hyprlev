@@ -50,6 +50,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: root.connected ? "WiFi  " + root.strength + "%" : "Not connected"
         show: root.hovered
         anchors.top: parent.bottom

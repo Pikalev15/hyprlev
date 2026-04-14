@@ -45,6 +45,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: Qt.formatDate(new Date(), "dddd, MMMM d yyyy")
         show: root.hovered
         anchors.top: parent.bottom

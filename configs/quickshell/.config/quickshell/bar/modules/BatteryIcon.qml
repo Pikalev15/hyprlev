@@ -56,6 +56,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: root.percent + "% — " + (root.full ? "Full" : root.charging ? "Charging" : "Discharging")
         show: root.hovered
         anchors.top: parent.bottom

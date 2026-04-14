@@ -34,6 +34,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: root.tooltip
         show: root.hovered
         anchors.top: parent.bottom

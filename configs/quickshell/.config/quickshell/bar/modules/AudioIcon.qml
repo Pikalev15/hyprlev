@@ -54,6 +54,7 @@ Item {
     }
 
     BarTooltip {
+        sourceItem: root
         text: root.muted ? "Muted" : Math.round(root.volume * 100) + "%"
         show: root.hovered
         anchors.top: parent.bottom

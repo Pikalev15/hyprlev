@@ -1,16 +1,18 @@
-// Bar.qml — Floating island layout
+// Bar.qml — Floating island, pinned to top of taller panel
 import QtQuick
 import QtQuick.Layouts
 import "modules"
 
 Item {
     id: root
-    required property var screen
 
+    // Island sits at the very top, 42px tall
     Rectangle {
         id: island
-        anchors.centerIn: parent
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
         height: 28
+        anchors.topMargin: 7
         width: inner.implicitWidth + 24
         radius: height / 2
         color: Qt.rgba(0.08, 0.08, 0.11, 0.90)
@@ -39,5 +41,14 @@ Item {
             NotificationBell {}
             PowerButton {}
         }
+    }
+
+    // Tooltips render into this layer below the island, never clipped
+    Item {
+        id: tooltipLayer
+        anchors.top: island.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 30
     }
 }
