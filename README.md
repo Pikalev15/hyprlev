@@ -1,3 +1,4 @@
+###### _<div align="right"><sub>// by levi · Pikalev15</sub></div>_
 <h1 align="center">HYPRLEV</h1>
 
 <a href="https://github.com/Pikalev15/hyprlev/stargazers"><img src="https://img.shields.io/github/stars/Pikalev15/hyprlev?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=C9CBFF&labelColor=302D41" alt="stars"></a>&nbsp;&nbsp;
