@@ -26,6 +26,12 @@ other waybars other than island were acquired from the waybar examples page!
 ```shell
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Pikalev15/hyprlev/main/install.sh)"
 ```
+or 
+
+```shell
+yay -S hyprlev-git
+hyprlev-install
+```
 
 # Features
 - Full theme switcher intergration

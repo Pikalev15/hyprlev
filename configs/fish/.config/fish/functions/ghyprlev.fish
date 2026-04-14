@@ -1,4 +1,4 @@
-function gdots
+function ghyprlev
     cd ~/hyprlev
     git add .
     git commit -m $argv[1]
