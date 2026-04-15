@@ -31,6 +31,7 @@ other waybars other than island were acquired from the waybar examples page!
 ```shell
 yay -S hyprlev-git # currently quite unstable
 hyprlev-install
+```
 
 or 
 
@@ -38,7 +39,6 @@ or
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Pikalev15/hyprlev/main/install.sh)"
 ```
 or build from source
-
 
 
 
