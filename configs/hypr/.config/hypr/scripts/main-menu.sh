@@ -28,12 +28,10 @@ show_main_menu() {
     echo "󰂯 Bluetooth"
     echo "󰒓 Tools"
     echo "󰲌 Projects"
-    echo "󰠮 Journal"
     echo "󱡶 Services"
     echo "󰅬 Scripts"
     echo "󰌌 Keybinds"
     echo "󰒓 Task Manager"
-    echo "󰋗 About"
     echo "󰐥 System"
 }
 
@@ -412,22 +410,6 @@ show_bluetooth() {
     esac
 }
 
-# Journal
-show_journal() {
-    ENTRY=$(echo -e "󰃭 Today\n󰃮 Tomorrow" | rofi_cmd -dmenu -i -p "Journal")
-    
-    case "$ENTRY" in
-        *"Today")
-            ~/.config/hypr/scripts/journal/today 
-            notify-send "Journal" "Opening today's journal"
-            ;;
-        *"Tomorrow")
-            ~/.config/hypr/scripts/journal/tomorrow
-            notify-send "Journal" "Opening tomorrow's journal"
-            ;;
-    esac
-}
-
 # Task Manager
 show_task_manager() {
     $TERMINAL -e btop
@@ -589,7 +571,7 @@ show_services() {
 
 # Projects menu
 show_projects() {
-    DIRS=$(find ~/hyprlev ~/hyprlev/* ~/hyprlev/*/* ~/hyprlev/*/*/* ~/Pikalev15 -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sed "s|^$HOME/||")
+    DIRS=$(find ~/hyprlev ~/hyprlev/* ~/hyprlev/*/* ~/hyprlev/*/*/* ~/Pikalev15 ~/hyprlev-git -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sed "s|^$HOME/||")
     
     if [ -z "$DIRS" ]; then
         notify-send "Projects" "No directories found"
@@ -620,11 +602,6 @@ show_projects() {
 # Keybinds menu
 show_keybinds() {
     ~/.config/hypr/scripts/keymap-menu.sh
-}
-
-# About
-show_about() {
-    $TERMINAL -e bash -c "fastfetch; read -p 'Press enter to close...'"
 }
 
 # System menu
@@ -662,12 +639,6 @@ case "$CHOICE" in
     *"Bluetooth")
         show_bluetooth
         ;;
-    *"Time Tracker")
-        show_timetracker
-        ;;
-    *"Journal")
-        show_journal
-        ;;
     *"Task Manager")
         show_task_manager
         ;;
@@ -682,9 +653,6 @@ case "$CHOICE" in
         ;;
     *"Keybinds")
         show_keybinds
-        ;;
-    *"About")
-        show_about
         ;;
     *"System")
         show_system

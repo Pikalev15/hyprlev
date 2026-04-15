@@ -58,7 +58,7 @@ listview {
     padding: 6px 0px 0px;
     margin: 10px 5px 5px 5px;
     columns: 1;
-    lines: 8;
+    lines: 6;
     background-color: @bg-col;
 }
 
