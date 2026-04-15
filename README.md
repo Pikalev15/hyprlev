@@ -40,7 +40,10 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/Pikalev15/hyprlev/main/i
 ```
 or build from source
 
-
+```bash
+git clone https://github.com/Pikalev15/hyprlev.git
+cd hyprlev
+./install.sh
 
 # Features
 - Full theme switcher intergration
