@@ -3,7 +3,7 @@
 # ==============================================================================
 # Script Versioning & Initialization
 # ==============================================================================
-DOTS_VERSION="1.0.0"
+DOTS_VERSION="0.01.5"
 VERSION_FILE="$HOME/.local/state/hyprlev-version"
 
 setterm -blank 0 -powerdown 0 2>/dev/null || true
@@ -250,20 +250,20 @@ show_overview() {
     print_kb() { printf "  ${C_CYAN}[${RESET} ${BOLD}%-20s${RESET} ${C_CYAN}]${RESET}  ${C_YELLOW}➜${RESET}  %s\n" "$1" "$2"; }
 
     echo -e "${BOLD}${C_BLUE}--- Applications ---${RESET}"
-    print_kb "SUPER + RETURN" "Terminal (kitty)"
-    print_kb "SUPER + D" "App Launcher (rofi)"
+    print_kb "SUPER + T" "Terminal (kitty)"
+    print_kb "SUPER" "App Launcher (rofi)"
     print_kb "SUPER + C" "Config Browser"
-    print_kb "SUPER + L" "Lock Screen"
+    print_kb "SUPER + B" "Browser"
     echo ""
 
     echo -e "${BOLD}${C_BLUE}--- Theme Switching ---${RESET}"
-    print_kb "SUPER + SHIFT + W" "Wallpaper / Theme Picker"
+    print_kb "SUPER + SHIFT + U" "Wallpaper Picker"
     echo ""
 
     echo -e "${BOLD}${C_BLUE}--- Window Management ---${RESET}"
     print_kb "SUPER + Q" "Close Window"
-    print_kb "SUPER + SHIFT + F" "Toggle Floating"
-    print_kb "SUPER + F" "Toggle Fullscreen"
+    print_kb "SUPER + F" "Toggle Floating"
+    print_kb "XF86FullScreen" "Toggle Fullscreen"
     print_kb "SUPER + Arrows" "Move Focus"
     echo ""
 
