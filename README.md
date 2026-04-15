@@ -6,7 +6,7 @@
 <a href="https://github.com/Pikalev15/hyprlev/issues"><img src="https://img.shields.io/github/issues/Pikalev15/hyprlev?style=for-the-badge&logo=github&logoColor=eba0ac&label=Issues&labelColor=302D41&color=eba0ac" alt="issues"></a>&nbsp;&nbsp;
 <a href="https://github.com/Pikalev15/hyprlev/commits/main"><img src="https://img.shields.io/github/last-commit/Pikalev15/hyprlev?style=for-the-badge&logo=github&logoColor=white&label=Last%20Commit&labelColor=302D41&color=A6E3A1" alt="last commit"></a>&nbsp;&nbsp;
 <a href="https://github.com/Pikalev15/hyprlev/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Pikalev15/hyprlev?style=for-the-badge&logo=open-source-initiative&color=CBA6F7&logoColor=CBA6F7&labelColor=302D41" alt="license"></a>&nbsp;&nbsp;
-![AUR Version](https://img.shields.io/aur/version/hyprlev-git?style=for-the-badge&labelColor=181825&color=b4befe)
+![AUR Version](https://img.shields.io/aur/version/kwybars-bin?style=for-the-badge&labelColor=181825&color=b4befe)
 
 <h4 align="center">
   <a href="https://github.com/Pikalev15/hyprlev/blob/main/documentation.md">Check out the documentation!</a><br><br>
