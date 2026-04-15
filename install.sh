@@ -268,7 +268,7 @@ show_overview() {
     echo ""
 
     echo -e "${BOLD}${C_BLUE}--- System ---${RESET}"
-    print_kb "Print Screen" "Screenshot"
+    print_kb "Print" "Screenshot"
     print_kb "SUPER + ALT + S" "Toggle Night Mode"
     print_kb "ALT + SHIFT" "Switch Keyboard Layout"
     echo ""
