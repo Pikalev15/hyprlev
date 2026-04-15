@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Directory to save screenshots
-SAVE_DIR="$HOME/Images/Screenshots"
+SAVE_DIR="$HOME/Pictures/Screenshots"
 mkdir -p "$SAVE_DIR"
 
 # Define timestamp for filenames

@@ -16,10 +16,6 @@
       "sway/window"
     ],
     "modules-right": [
-      "temperature",
-      "cpu",
-      "memory",
-      "network",
       "pulseaudio",
       "backlight",
       "battery",
@@ -163,7 +159,7 @@
         "warning": 30,
         "critical": 15
       },
-      "format": "{icon} {capacity}%",
+      "format": "{icon}   {capacity}%",
       "format-charging": " {capacity}%",
       "format-plugged": " {capacity}%",
       "format-alt": "{icon} {time}",
@@ -188,10 +184,10 @@
     },
     "pulseaudio": {
       "scroll-step": 5,
-      "format": "{icon}  {volume}% {format_source}",
+      "format": "{icon}  {volume}% ",
       "format-bluetooth": " {icon} {volume}% {format_source}",
       "format-bluetooth-muted": "  {icon} {format_source}",
-      "format-muted": "  {format_source}",
+      "format-muted": " {volume}%",
       "format-icons": {
         "default": [
           "",
@@ -203,36 +199,4 @@
       "on-click-right": "foot -a pw-top pw-top"
     }
   },
-  {
-    "layer": "top",
-    "position": "bottom",
-    "height": 20,
-    "width": 2,
-    "modules-left": [
-      "custom/os_button"
-    ],
-    "modules-center": [
-      "sway/mode",
-      "wlr/taskbar"
-    ],
-    "margin": "4",
-    "spacing": "5",
-    "sway/window": {
-      "max-length": 60
-    },
-    "custom/os_button": {
-      "format": "🔍",
-      "on-click": "bash ~/.config/hypr/scripts/rofi-toggle.sh",
-      "tooltip": false
-    },
-    "wlr/taskbar": {
-      "format": "{icon}",
-      "icon-size": 15,
-      "spacing": 3,
-      "on-click-middle": "close",
-      "tooltip-format": "{title}",
-      "ignore-list": [],
-      "on-click": "activate"
-    }
-  }
 ]

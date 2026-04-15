@@ -54,22 +54,8 @@ cd hyprlev
 - snappy-switcher for ALT TAB
 - full gtk theme switching
 
-# Instructions
-To run the quickshell config by ilyamiro, run
-```shell
-quickshell -p ~/.config/hypr/scripts/quickshell/Main.qml & disown
-quickshell -p ~/.config/hypr/scripts/quickshell/TopBar.qml & disown
-```
-
-To run my quickshell config, run
-```shell
-quickshell -p ~/quickshell/bar
-```
-On default, ilyamiro's config is attached to autostart.conf. To switch to waybar or quickshell, for now you have to manually update the autostart.conf
-
 # TODO
  - [ ] Set up Matugen
- - [ ] Set up hyprpicker
  - [ ] Tweak swaync
  - [ ] set up html on start
  - [ ] make proper windowrules
@@ -84,7 +70,7 @@ On default, ilyamiro's config is attached to autostart.conf. To switch to waybar
 - [x] Swaync
 - [x] Wlogout
 - [x] nwg-dock-hyprland
-
+- [x] Set up hyprpicker
 
 Thanks to
 - [saneaspect] (https://github.com/saneaspect) for yt videos to learn how to set up hyprland efficiently!
