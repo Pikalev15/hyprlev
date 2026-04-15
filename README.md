@@ -44,6 +44,7 @@ or build from source
 git clone https://github.com/Pikalev15/hyprlev.git
 cd hyprlev
 ./install.sh
+```
 
 # Features
 - Full theme switcher intergration
