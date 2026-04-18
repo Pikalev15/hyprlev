@@ -38,7 +38,7 @@ or
 ```shell
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Pikalev15/hyprlev/main/install.sh)"
 ```
-or build from source
+or manually
 
 ```bash
 git clone https://github.com/Pikalev15/hyprlev.git

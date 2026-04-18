@@ -1,7 +1,3 @@
-// Rofi Configuration
-// Author: Binoy Manoj
-// GitHub: https://github.com/binoymanoj
-
 * {
     bg-col: #11111b;          
     bg-col-light: #313244;
