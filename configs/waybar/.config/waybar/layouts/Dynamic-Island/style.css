@@ -1,0 +1,91 @@
+
+
+@import "colors/colors.css";
+
+* {
+    all: unset;
+    font-family: "Google Sans Flex", "JetBrains Mono Nerd Font Propo";
+}
+
+tooltip {
+    background-color: @bg1;
+    color: @fg;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.modules-center {
+    background-color: @bg1;
+    color: @fg;
+    padding: 4px 18px;
+    border-radius: 99px;
+
+
+}
+
+#clock {
+    font-weight: 600;
+}
+
+#workspaces {
+    background-color: @bg2;
+    padding: 2px 4px;
+    margin: 3px 0;
+    border-radius: 99px;
+}
+
+#workspaces button {
+    background-color: @bg3;
+    padding: 0px 5px;
+    border-radius: 99px;
+    margin: 0 2px;
+    transition: all 0.3s ease-in-out;
+    min-width: 7px;
+}
+
+#workspaces button.empty {
+    color: @grey;
+}
+
+#workspaces button.active {
+    background-color: @color6;
+    color: @bg1;
+    min-width: 1.5rem;
+    font-weight: 600;
+    transition: none;
+}
+
+#workspaces button.urgent {
+    background-color: @red;
+}
+
+#battery.charging {
+    background-color: @color7;
+}
+
+#battery {
+    background-color: @color6;
+    margin: 6px 0;
+    padding: 0 8px;
+    border-radius: 99px;
+    font-weight: 600;
+    color: @bg1;
+    letter-spacing: 0.5px;
+}
+
+#battery.warning {
+    background-color: @yellow;
+}
+
+#battery.critical {
+    background-color: @red;
+}
+
+#custom-keyboard.enabled {
+    color: @color6;
+}
+
+#custom-keyboard.disabled {
+    border-radius: 20px;
+}

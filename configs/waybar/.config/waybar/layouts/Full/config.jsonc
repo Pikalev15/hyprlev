@@ -1,0 +1,112 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "position": "top",
+    "margin-top": 15,
+    "reload_style_on_change": true,
+    "modules-left": [
+        "clock",
+        "hyprland/workspaces",
+        "custom/todo"
+    ],
+    "modules-center": [
+        "tray"
+    ],
+    "modules-right": [
+        "custom/keyboard",
+        "pulseaudio",
+        "network",
+        "battery",
+        "custom/notification"
+    ],
+
+    "clock": {
+        "interval": 60,
+        "format": "{:%H:%M}",
+        "max-length": 25,
+        "tooltip": false
+    },
+
+    "custom/keyboard": {
+        "format": "{}",
+        "return-type": "json",
+        "exec": "~/toggle_squeekboard.sh status",
+        "on-click": "~/toggle_squeekboard.sh",
+        "signal": 1,
+        "interval": 5,
+        "tooltip": false
+    },
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "format-icons": {
+            "active": "",
+            "default": ""
+        },
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
+
+    "network": {
+        "format-wifi": "{essid} 󰤨",
+        "format-ethernet": "{ipaddr}/{cidr} 󰊗",
+        "format-disconnected": "󰤮",
+        "on-click": "kitty nmtui"
+    },
+
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    "tray": {
+        "icon-size": 21,
+        "spacing": 10
+    },
+
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-icons": {
+            "default": ["", "", "", "", ""],
+            "charging": [" 󱐋", " 󱐋", " 󱐋", " 󱐋", " 󱐋"]
+        }
+    },
+
+    "custom/todo": {
+        "format": "  {}",
+        "exec": "bash ~/.config/waybar/scripts/todo/todo.sh",
+        "on-double-click": "bash ~/.config/waybar/scripts/todo/todo.sh --mark-done",
+        "on-click-right": "killall rofi || bash ~/.config/waybar/scripts/todo/todo.sh --show-rofi",
+        "on-click-middle": "bash ~/.config/waybar/scripts/todo/todo.sh --middle-click",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true
+    },
+
+    "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    }
+}
