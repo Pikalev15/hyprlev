@@ -1,0 +1,278 @@
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import "../../.."
+import "../../../core"
+import "../../../core/functions" as Functions
+import "../../../services"
+import "../../../widgets"
+import ".."
+import Quickshell
+import Quickshell.Io
+
+/**
+ * Processes page for the System Monitor.
+ * Displays a list of running processes with the ability to kill them.
+ */
+Item {
+    id: root
+
+    property string sortField: "cpu"
+    property bool sortAscending: false
+
+
+    readonly property var sortedProcesses: {
+        let procs = SystemData.allProcesses.slice();
+        procs.sort((a, b) => {
+            let valA = a[sortField];
+            let valB = b[sortField];
+            if (typeof valA === "string") {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            }
+            if (valA < valB) return sortAscending ? -1 : 1;
+            if (valA > valB) return sortAscending ? 1 : -1;
+            return 0;
+        });
+        return procs;
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 20 * Appearance.effectiveScale
+        spacing: 16 * Appearance.effectiveScale
+
+        RowLayout {
+            Layout.fillWidth: true
+            StyledText {
+                text: "Processes"
+                font.pixelSize: Appearance.font.pixelSize.huge
+                font.weight: Font.DemiBold
+                color: Appearance.m3colors.m3onSurface
+            }
+            Item { Layout.fillWidth: true }
+            StyledText {
+                text: SystemData.processCount + " total processes"
+                font.pixelSize: Appearance.font.pixelSize.smaller
+                color: Appearance.colors.colSubtext
+            }
+        }
+
+        // Header
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 40 * Appearance.effectiveScale
+            color: Appearance.colors.colLayer1
+            radius: 8 * Appearance.effectiveScale
+            
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 16 * Appearance.effectiveScale
+                anchors.rightMargin: 16 * Appearance.effectiveScale
+                spacing: 12 * Appearance.effectiveScale
+                
+                HeaderItem { text: "PID"; field: "pid"; Layout.preferredWidth: 60 * Appearance.effectiveScale }
+                HeaderItem { text: "Name"; field: "command"; Layout.fillWidth: true }
+                HeaderItem { text: "CPU %"; field: "cpu"; Layout.preferredWidth: 80 * Appearance.effectiveScale; alignment: Text.AlignRight }
+                HeaderItem { text: "Memory"; field: "memoryKB"; Layout.preferredWidth: 100 * Appearance.effectiveScale; alignment: Text.AlignRight }
+                HeaderItem { text: "User"; field: "username"; Layout.preferredWidth: 100 * Appearance.effectiveScale; alignment: Text.AlignRight }
+            }
+        }
+
+        // Process List
+        ListView {
+            id: processList
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            // ScriptModel diffs by pid — only adds/removes changed rows,
+            // so the ListView never resets contentY on data refresh.
+            model: ScriptModel {
+                values: root.sortedProcesses
+                objectProp: "pid"
+            }
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            cacheBuffer: 0
+            spacing: 6 * Appearance.effectiveScale
+            
+            delegate: Rectangle {
+                required property var modelData
+                width: ListView.view.width
+                implicitHeight: 44 * Appearance.effectiveScale
+                radius: 12 * Appearance.effectiveScale
+                color: mouseArea.containsMouse ? Appearance.colors.colLayer2 : Appearance.colors.colLayer1
+                border.color: mouseArea.containsMouse ? Appearance.m3colors.m3primary : Functions.ColorUtils.transparentize(Appearance.m3colors.m3primary, 0.85)
+                border.width: 1 * Appearance.effectiveScale
+                
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 16 * Appearance.effectiveScale
+                    anchors.rightMargin: 16 * Appearance.effectiveScale
+                    spacing: 12 * Appearance.effectiveScale
+                    
+                    StyledText { text: modelData.pid; Layout.preferredWidth: 60 * Appearance.effectiveScale; color: Appearance.colors.colSubtext; font.pixelSize: Appearance.font.pixelSize.smaller }
+                    StyledText { text: modelData.command; Layout.fillWidth: true; elide: Text.ElideRight; font.weight: Font.Medium; font.pixelSize: Appearance.font.pixelSize.small }
+                    StyledText { text: modelData.cpu.toFixed(1) + "%"; Layout.preferredWidth: 80 * Appearance.effectiveScale; horizontalAlignment: Text.AlignRight; font.pixelSize: Appearance.font.pixelSize.smaller }
+                    StyledText { text: (modelData.memoryKB / 1024).toFixed(1) + " MB"; Layout.preferredWidth: 100 * Appearance.effectiveScale; horizontalAlignment: Text.AlignRight; font.pixelSize: Appearance.font.pixelSize.smaller }
+                    StyledText { text: modelData.username; Layout.preferredWidth: 100 * Appearance.effectiveScale; elide: Text.ElideRight; horizontalAlignment: Text.AlignRight; font.pixelSize: Appearance.font.pixelSize.smaller }
+                }
+                
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                        if (mouse.button === Qt.RightButton) {
+                            processMenu.targetPid = modelData.pid;
+                            processMenu.targetName = modelData.command;
+                            processMenu.popup();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Context Menu
+    Menu {
+        id: processMenu
+        property int targetPid: 0
+        property string targetName: ""
+        
+        Process {
+            id: actionProc
+        }
+
+        background: Rectangle {
+            implicitWidth: Appearance.sizes.contextMenuWidth
+            color: Appearance.colors.colLayer0
+            opacity: 0.98
+            radius: Appearance.rounding.normal
+            border.color: Appearance.colors.colOutlineVariant
+            border.width: Math.max(1, 1 * Appearance.effectiveScale)
+        }
+
+        component StyledMenuItem: MenuItem {
+            id: menuItem
+            
+            implicitHeight: Appearance.sizes.contextMenuItemHeight
+            
+            contentItem: RowLayout {
+                spacing: 12 * Appearance.effectiveScale
+                MaterialSymbol {
+                    text: {
+                        if (menuItem.text.includes("Kill")) return "delete_forever";
+                        if (menuItem.text.includes("Stop")) return "pause";
+                        if (menuItem.text.includes("Continue")) return "play_arrow";
+                        if (menuItem.text.includes("Close")) return "close";
+                        if (menuItem.text.includes("Copy")) return "content_copy";
+                        return "info";
+                    }
+                    iconSize: Appearance.sizes.iconSize * 0.9
+                    color: menuItem.highlighted ? Appearance.colors.colPrimary : Appearance.colors.colOnLayer0
+                }
+                StyledText {
+                    text: menuItem.text
+                    font.pixelSize: Appearance.font.pixelSize.small
+                    font.weight: menuItem.highlighted ? Font.Medium : Font.Normal
+                    color: menuItem.highlighted ? Appearance.colors.colPrimary : Appearance.colors.colOnLayer0
+                    Layout.fillWidth: true
+                }
+            }
+            
+            background: Rectangle {
+                anchors.fill: parent
+                anchors.margins: 4 * Appearance.effectiveScale
+                color: menuItem.highlighted ? Functions.ColorUtils.applyAlpha(Appearance.colors.colPrimary, 0.12) : "transparent"
+                radius: Appearance.rounding.small
+            }
+        }
+        
+        padding: 6 * Appearance.effectiveScale
+
+        StyledMenuItem {
+            text: "Stop (Pause)"
+            onTriggered: { actionProc.command = ["kill", "-STOP", processMenu.targetPid.toString()]; actionProc.running = true; }
+        }
+        StyledMenuItem {
+            text: "Continue"
+            onTriggered: { actionProc.command = ["kill", "-CONT", processMenu.targetPid.toString()]; actionProc.running = true; }
+        }
+        
+        MenuSeparator {
+            contentItem: Rectangle { 
+                implicitHeight: Math.max(1, 1 * Appearance.effectiveScale) 
+                color: Appearance.colors.colOutlineVariant 
+                opacity: 0.3
+                Layout.leftMargin: 12 * Appearance.effectiveScale 
+                Layout.rightMargin: 12 * Appearance.effectiveScale 
+            }
+        }
+
+        StyledMenuItem {
+            text: "Kill (Force)"
+            onTriggered: { actionProc.command = ["kill", "-9", processMenu.targetPid.toString()]; actionProc.running = true; }
+        }
+        
+        StyledMenuItem {
+            text: "Close (Graceful)"
+            onTriggered: { actionProc.command = ["kill", processMenu.targetPid.toString()]; actionProc.running = true; }
+        }
+
+        MenuSeparator {
+            contentItem: Rectangle { 
+                implicitHeight: Math.max(1, 1 * Appearance.effectiveScale) 
+                color: Appearance.colors.colOutlineVariant 
+                opacity: 0.3
+                Layout.leftMargin: 12 * Appearance.effectiveScale 
+                Layout.rightMargin: 12 * Appearance.effectiveScale 
+            }
+        }
+
+        StyledMenuItem {
+            text: "Copy PID"
+            onTriggered: Quickshell.clipboardText = processMenu.targetPid.toString()
+        }
+    }
+
+    // Helper for Header Items
+    component HeaderItem: MouseArea {
+        property string text
+        property string field
+        property int alignment: Text.AlignLeft
+        
+        Layout.fillHeight: true
+        hoverEnabled: true
+        
+        onClicked: {
+            if (root.sortField === field) {
+                root.sortAscending = !root.sortAscending;
+            } else {
+                root.sortField = field;
+                root.sortAscending = false;
+            }
+        }
+        
+        RowLayout {
+            anchors.fill: parent
+            spacing: 4 * Appearance.effectiveScale
+            layoutDirection: alignment === Text.AlignRight ? Qt.RightToLeft : Qt.LeftToRight
+            
+            StyledText {
+                text: parent.parent.text
+                font.pixelSize: Appearance.font.pixelSize.smaller
+                font.weight: Font.DemiBold
+                color: root.sortField === parent.parent.field ? Appearance.m3colors.m3primary : Appearance.colors.colSubtext
+                Layout.fillWidth: true
+                horizontalAlignment: parent.parent.alignment
+            }
+            MaterialSymbol {
+                visible: root.sortField === parent.parent.field
+                text: root.sortAscending ? "arrow_upward" : "arrow_downward"
+                iconSize: 12 * Appearance.effectiveScale
+                color: Appearance.m3colors.m3primary
+            }
+        }
+    }
+}
