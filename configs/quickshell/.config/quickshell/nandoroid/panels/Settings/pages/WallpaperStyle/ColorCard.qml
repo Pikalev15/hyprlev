@@ -1,0 +1,119 @@
+import "../../../../core"
+import "../../../../widgets"
+import QtQuick
+import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects
+
+RippleButton {
+    id: card
+    property string label: ""
+    property var cardColors: ["transparent", "transparent", "transparent"]
+    property string iconName: ""
+    property bool isSelected: false
+    
+    implicitWidth: 104 * Appearance.effectiveScale
+    implicitHeight: 120 * Appearance.effectiveScale
+    buttonRadius: 28 * Appearance.effectiveScale
+    colBackground: Appearance.colors.colLayer2
+    colBackgroundToggled: Appearance.colors.colLayer2 // Handled by border
+    colText: "white"
+    colTextToggled: "white"
+    colRipple: Appearance.colors.colLayer2Active
+
+    contentItem: Item {
+        anchors.fill: parent
+        
+        // Custom background with 3 bars
+        Rectangle {
+            id: cardContent
+            anchors.fill: parent
+            radius: card.buttonRadius
+            clip: true
+            color: Appearance.colors.colLayer2
+            
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: Rectangle {
+                    width: cardContent.width
+                    height: cardContent.height
+                    radius: cardContent.radius
+                }
+            }
+
+            Row {
+                anchors.fill: parent
+                // Show bars if no icon is set OR if the card is selected (even if it has an icon)
+                visible: card.iconName === "" || card.isSelected
+                Rectangle { width: parent.width/3; height: parent.height; color: card.cardColors[0] }
+                Rectangle { width: parent.width/3; height: parent.height; color: card.cardColors[1] }
+                Rectangle { width: parent.width/3; height: parent.height; color: card.cardColors[2] }
+            }
+
+            // Icon support
+            MaterialSymbol {
+                anchors.centerIn: parent
+                // Only show icon if set AND card is NOT selected
+                visible: card.iconName !== "" && !card.isSelected
+                text: card.iconName
+                iconSize: 48 * Appearance.effectiveScale
+                color: "white" // Neutral color when inactive
+            }
+            
+            // Bottom Gradient for text readability
+            Rectangle {
+                anchors.bottom: parent.bottom
+                width: parent.width
+                height: 48 * Appearance.effectiveScale
+                visible: card.iconName === "" || card.isSelected
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "transparent" }
+                    GradientStop { position: 1.0; color: Qt.rgba(0,0,0,0.6) }
+                }
+            }
+        }
+        
+        // Selection Border / Glow
+        Rectangle {
+            anchors.fill: parent
+            color: "transparent"
+            border.width: 3 * Appearance.effectiveScale
+            border.color: Appearance.m3colors.m3primary
+            radius: card.buttonRadius
+            visible: card.isSelected
+            opacity: 0.8
+        }
+
+        // Label
+        StyledText {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 8 * Appearance.effectiveScale
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: card.label
+            font.pixelSize: Appearance.font.pixelSize.smaller
+            font.weight: Font.Medium
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            lineHeight: 0.9
+            maximumLineCount: 2
+            width: parent.width - (12 * Appearance.effectiveScale)
+        }
+        
+        // Centered Checkmark in Circle
+        Rectangle {
+            anchors.centerIn: parent
+            width: 32 * Appearance.effectiveScale
+            height: 32 * Appearance.effectiveScale
+            radius: 16 * Appearance.effectiveScale
+            color: "#1A1C1E"
+            visible: card.isSelected
+            
+            MaterialSymbol {
+                anchors.centerIn: parent
+                text: "check"
+                iconSize: 20 * Appearance.effectiveScale
+                color: "white"
+            }
+        }
+    }
+}

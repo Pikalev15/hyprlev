@@ -1,0 +1,507 @@
+import "../../../../core"
+import "../../../../services"
+import "../../../../widgets"
+import "../../../../core/functions" as Functions
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import Qt5Compat.GraphicalEffects
+import Quickshell
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4 * Appearance.effectiveScale
+            
+            SearchHandler { 
+                searchString: "Weather"
+                aliases: ["Forecast", "Temperature", "Climate"]
+            }
+
+            RowLayout {
+                spacing: 12 * Appearance.effectiveScale
+                Layout.bottomMargin: 8 * Appearance.effectiveScale
+                MaterialSymbol {
+                    text: "cloud"
+                    iconSize: 24 * Appearance.effectiveScale
+                    color: Appearance.colors.colPrimary
+                }
+                StyledText {
+                    text: "Weather"
+                    font.pixelSize: Appearance.font.pixelSize.large
+                    font.weight: Font.Medium
+                    color: Appearance.colors.colOnLayer1
+                }
+            }
+
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: weatherEnableRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                RowLayout {
+                    id: weatherEnableRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Enable Weather Service"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "Show the weather widget in the notification center."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    // Custom Switch
+                    Rectangle {
+                        implicitWidth: 52 * Appearance.effectiveScale
+                        implicitHeight: 28 * Appearance.effectiveScale
+                        radius: 14 * Appearance.effectiveScale
+                        color: (Config.ready && Config.options.weather && Config.options.weather.enable)
+                            ? Appearance.colors.colPrimary
+                            : Appearance.m3colors.m3surfaceContainerLowest
+
+                        Rectangle {
+                            width: 20 * Appearance.effectiveScale
+                            height: 20 * Appearance.effectiveScale
+                            radius: 10 * Appearance.effectiveScale
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: (Config.ready && Config.options.weather && Config.options.weather.enable) ? parent.width - width - 4 * Appearance.effectiveScale : 4 * Appearance.effectiveScale
+                            color: (Config.ready && Config.options.weather && Config.options.weather.enable)
+                                ? Appearance.colors.colOnPrimary
+                                : Appearance.colors.colSubtext
+                            Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (Config.ready && Config.options.weather) {
+                                    Config.options.weather.enable = !Config.options.weather.enable;
+                                    if (Config.options.weather.enable) {
+                                        Weather.fetch();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 1. Weather Provider Card
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: providerRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                
+                RowLayout {
+                    id: providerRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Weather Provider"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "Select primary source for weather data."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    RowLayout {
+                        spacing: 4 * Appearance.effectiveScale
+                        Layout.preferredHeight: 52 * Appearance.effectiveScale
+                        Layout.alignment: Qt.AlignRight
+                        
+                        Repeater {
+                            model: [
+                                { label: "Open-Meteo", value: "open-meteo" },
+                                { label: "wttr.in", value: "wttr.in" }
+                            ]
+                            delegate: SegmentedButton {
+                                isHighlighted: (Config.ready && Config.options.weather) ? (Config.options.weather.provider || "open-meteo") === modelData.value : false
+                                Layout.fillHeight: true
+                                
+                                buttonText: modelData.label
+                                leftPadding: 16 * Appearance.effectiveScale
+                                rightPadding: 16 * Appearance.effectiveScale
+                                
+                                colActive: Appearance.m3colors.m3primary
+                                colActiveText: Appearance.m3colors.m3onPrimary
+                                colInactive: Appearance.m3colors.m3surfaceContainerLow
+                                
+                                onClicked: {
+                                    if (Config.ready && Config.options.weather) {
+                                        Config.options.weather.provider = modelData.value;
+                                        Weather.fetch();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. Auto Location Card
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: autoLocRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                
+                RowLayout {
+                    id: autoLocRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Auto detect location"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "Determine weather based on your IP address."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    // Custom Switch
+                    Rectangle {
+                        implicitWidth: 52 * Appearance.effectiveScale
+                        implicitHeight: 28 * Appearance.effectiveScale
+                        radius: 14 * Appearance.effectiveScale
+                        color: (Config.ready && Config.options.weather && Config.options.weather.autoLocation)
+                            ? Appearance.colors.colPrimary
+                            : Appearance.m3colors.m3surfaceContainerLowest
+
+                        Rectangle {
+                            width: 20 * Appearance.effectiveScale
+                            height: 20 * Appearance.effectiveScale
+                            radius: 10 * Appearance.effectiveScale
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: (Config.ready && Config.options.weather && Config.options.weather.autoLocation) ? parent.width - width - 4 * Appearance.effectiveScale : 4 * Appearance.effectiveScale
+                            color: (Config.ready && Config.options.weather && Config.options.weather.autoLocation)
+                                ? Appearance.colors.colOnPrimary
+                                : Appearance.colors.colSubtext
+                            Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (Config.ready && Config.options.weather) {
+                                    Config.options.weather.autoLocation = !Config.options.weather.autoLocation;
+                                    Weather.fetch();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. Manual Location Card (Middle)
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: locRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable && !Config.options.weather.autoLocation
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+
+                RowLayout {
+                    id: locRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    StyledText {
+                        text: "Manual Location"
+                        font.pixelSize: Appearance.font.pixelSize.normal
+                        font.weight: Font.Medium
+                        color: Appearance.colors.colOnLayer1
+                        Layout.preferredWidth: 200 * Appearance.effectiveScale
+                    }
+                    
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 48 * Appearance.effectiveScale
+                        radius: 12 * Appearance.effectiveScale
+                        color: Appearance.m3colors.m3surfaceContainerLow
+                        border.width: locInput.activeFocus ? Math.max(1, 2 * Appearance.effectiveScale) : 0
+                        border.color: Appearance.colors.colPrimary
+
+                        TextInput {
+                            id: locInput
+                            anchors.fill: parent
+                            anchors.leftMargin: 16 * Appearance.effectiveScale
+                            anchors.rightMargin: 16 * Appearance.effectiveScale
+                            verticalAlignment: TextInput.AlignVCenter
+                            font.family: Appearance.font.family.main
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            color: Appearance.colors.colOnLayer1
+                            text: (Config.ready && Config.options.weather) ? Config.options.weather.location : ""
+                            onEditingFinished: {
+                                if (Config.ready && Config.options.weather) {
+                                    Config.options.weather.location = text;
+                                    Weather.fetch();
+                                }
+                            }
+                            
+                            StyledText {
+                                anchors.fill: parent
+                                verticalAlignment: Text.AlignVCenter
+                                text: "Enter city (e.g., London, UK)"
+                                color: Appearance.colors.colSubtext
+                                visible: locInput.text === "" && !locInput.activeFocus
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Temperature Unit Card (Middle)
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: unitRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                
+                RowLayout {
+                    id: unitRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Temperature Unit"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "Choose between Celsius and Fahrenheit."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    RowLayout {
+                        spacing: 4 * Appearance.effectiveScale
+                        Layout.preferredHeight: 52 * Appearance.effectiveScale
+                        Layout.alignment: Qt.AlignRight
+                        
+                        Repeater {
+                            model: [
+                                { label: "°C", value: "C" },
+                                { label: "°F", value: "F" }
+                            ]
+                            delegate: SegmentedButton {
+                                isHighlighted: (Config.ready && Config.options.weather) ? Config.options.weather.unit === modelData.value : false
+                                Layout.fillHeight: true
+                                
+                                buttonText: modelData.label
+                                leftPadding: 32 * Appearance.effectiveScale
+                                rightPadding: 32 * Appearance.effectiveScale
+                                
+                                colActive: Appearance.m3colors.m3primary
+                                colActiveText: Appearance.m3colors.m3onPrimary
+                                colInactive: Appearance.m3colors.m3surfaceContainerLow
+                                
+                                onClicked: {
+                                    if (Config.ready && Config.options.weather) {
+                                        Config.options.weather.unit = modelData.value;
+                                        Weather.fetch();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // 4. Daily Forecast Card (Middle)
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: dailyFlowRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                
+                RowLayout {
+                    id: dailyFlowRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Show 3 Days Forecast"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "Display additional weather for the next few days."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    // Custom Switch
+                    Rectangle {
+                        implicitWidth: 52 * Appearance.effectiveScale
+                        implicitHeight: 28 * Appearance.effectiveScale
+                        radius: 14 * Appearance.effectiveScale
+                        color: (Config.ready && Config.options.weather && Config.options.weather.showDailyForecast)
+                            ? Appearance.colors.colPrimary
+                            : Appearance.m3colors.m3surfaceContainerLowest
+
+                        Rectangle {
+                            width: 20 * Appearance.effectiveScale
+                            height: 20 * Appearance.effectiveScale
+                            radius: 10 * Appearance.effectiveScale
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: (Config.ready && Config.options.weather && Config.options.weather.showDailyForecast) ? parent.width - width - 4 * Appearance.effectiveScale : 4 * Appearance.effectiveScale
+                            color: (Config.ready && Config.options.weather && Config.options.weather.showDailyForecast)
+                                ? Appearance.colors.colOnPrimary
+                                : Appearance.colors.colSubtext
+                            Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                if (Config.ready && Config.options.weather) {
+                                    Config.options.weather.showDailyForecast = !Config.options.weather.showDailyForecast;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // 5. Update Interval Card (Bottom)
+            SegmentedWrapper {
+                Layout.fillWidth: true
+                implicitHeight: intervalRow.implicitHeight + 40 * Appearance.effectiveScale
+                orientation: Qt.Vertical
+                color: Appearance.m3colors.m3surfaceContainerHigh
+                smallRadius: 8 * Appearance.effectiveScale
+                fullRadius: 20 * Appearance.effectiveScale
+                
+                enabled: Config.ready && Config.options.weather && Config.options.weather.enable
+                opacity: enabled ? 1.0 : 0.5
+                Behavior on opacity { NumberAnimation { duration: 200 } }
+                
+                RowLayout {
+                    id: intervalRow
+                    anchors.fill: parent
+                    anchors.margins: 20 * Appearance.effectiveScale
+                    spacing: 20 * Appearance.effectiveScale
+
+                    ColumnLayout {
+                        spacing: 2 * Appearance.effectiveScale
+                        StyledText {
+                            text: "Update Interval"
+                            font.pixelSize: Appearance.font.pixelSize.normal
+                            font.weight: Font.Medium
+                            color: Appearance.colors.colOnLayer1
+                        }
+                        StyledText {
+                            text: "How often to refresh weather data."
+                            font.pixelSize: Appearance.font.pixelSize.small
+                            color: Appearance.colors.colSubtext
+                        }
+                    }
+                    
+                    Item { Layout.fillWidth: true }
+                    
+                    RowLayout {
+                        spacing: 8 * Appearance.effectiveScale
+                        
+                        StyledComboBox {
+                            implicitWidth: 140 * Appearance.effectiveScale
+                            searchable: false
+                            text: (Config.ready && Config.options.weather) ? (Config.options.weather.updateInterval + " mins") : "30 mins"
+                            model: ["15 mins", "30 mins", "1 hour", "2 hours", "4 hours"]
+                            onAccepted: (val) => {
+                                if (Config.ready && Config.options.weather) {
+                                    let mins = 30;
+                                    if (val === "15 mins") mins = 15;
+                                    else if (val === "30 mins") mins = 30;
+                                    else if (val === "1 hour") mins = 60;
+                                    else if (val === "2 hours") mins = 120;
+                                    else if (val === "4 hours") mins = 240;
+                                    Config.options.weather.updateInterval = mins;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+

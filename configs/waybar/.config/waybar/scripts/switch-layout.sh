@@ -46,6 +46,11 @@ quickshell-hypr)
   disown
   echo "exec-once = quickshell -p ~/.config/hypr/scripts/quickshell/Main.qml & quickshell -p ~/.config/hypr/scripts/quickshell/TopBar.qml &" >>"$AUTOSTART"
   ;;
+quickshell-nandroid)
+  quickshell -p ~/.config/quickshell/nandoroid/shell.qml
+  disown
+  echo "exec-once = quickshell -p ~/.config/quickshell/nandoroid/shell.qml &" >>"$AUTOSTART"
+  ;;
 *)
   notify-send "Layout" "Unknown layout: $LAYOUT" -u critical
   exit 1
