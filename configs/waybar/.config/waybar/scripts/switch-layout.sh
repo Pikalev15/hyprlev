@@ -27,7 +27,7 @@ sed -i '/exec-once = waybar/d' "$AUTOSTART"
 sed -i '/exec-once = quickshell/d' "$AUTOSTART"
 
 case "$LAYOUT" in
-catppuccin | Dynamic-Island | Full | Glass | island | Japan | macos | minimal | minimal-2)
+catppuccin | Full | Glass | island | Japan | macos | minimal | minimal-2)
   ln -sf "$WAYBAR_DIR/layouts/$LAYOUT/config.jsonc" "$WAYBAR_DIR/config.jsonc"
   ln -sf "$WAYBAR_DIR/layouts/$LAYOUT/style.css" "$WAYBAR_DIR/style.css"
   waybar &>/dev/null &
