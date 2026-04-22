@@ -401,11 +401,11 @@ Singleton {
         property real elevationMargin: 12 * scale
         
         // Dynamic Sidebar Panel sizing
-        property real quickSettingsWidth: Math.min(860 * scale, screen.width * 0.35)
-        property real quickSettingsMaxHeight: Math.min(300 * scale, screen.height * 0.85)
+        property real quickSettingsWidth: Math.min(420 * scale, screen.width * 0.35)
+        property real quickSettingsMaxHeight: Math.min(800 * scale, screen.height * 0.85)
         
-        property real notificationCenterWidth: Math.min(800 * scale, screen.width * 0.35)
-        property real notificationCenterMaxHeight: Math.min(420 * scale, screen.height * 0.85)
+        property real notificationCenterWidth: Math.min(420 * scale, screen.width * 0.35)
+        property real notificationCenterMaxHeight: Math.min(800 * scale, screen.height * 0.85)
 
         // New scaling tokens for internal components
         property real notificationIslandMaxHeight: Math.min(450 * scale, screen.height * 0.5)

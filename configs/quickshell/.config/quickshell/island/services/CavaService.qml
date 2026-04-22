@@ -1,0 +1,124 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import Quickshell
+import Quickshell.Io
+
+Singleton {
+    id: root
+
+    property list<int> values: []
+    property int barCount: 128
+    property bool _internalRestart: true
+    property int refCount: 0
+    property bool cavaAvailable: false
+
+    onRefCountChanged: {
+        if (refCount < 0) refCount = 0;
+    }
+
+    function restart() {
+        _internalRestart = false;
+        restartTimer.start();
+    }
+
+    Timer {
+        id: restartTimer
+        interval: 500
+        repeat: false
+        onTriggered: {
+            Quickshell.execDetached(["pkill", "-9", "cava"]);
+            _internalRestart = true;
+        }
+    }
+
+    onBarCountChanged: {
+        if (cavaProcess.running) {
+            _internalRestart = false;
+            Qt.callLater(() => { _internalRestart = true; });
+        }
+    }
+
+    Process {
+        id: cavaCheck
+        command: ["which", "cava"]
+        running: false
+        onExited: exitCode => {
+            root.cavaAvailable = exitCode === 0;
+        }
+    }
+
+    Component.onCompleted: {
+        // Cleanup any orphan cava processes from previous session
+        Quickshell.execDetached(["pkill", "-9", "cava"]);
+        
+        // Wait for system audio to stabilize before checking availability
+        startupTimer.start();
+        
+        // Initialize values
+        let arr = [];
+        for (let i = 0; i < barCount; i++) arr.push(0);
+        root.values = arr;
+    }
+
+    Timer {
+        id: startupTimer
+        interval: 2500 // 2.5 seconds delay for startup stability
+        repeat: false
+        onTriggered: cavaCheck.running = true;
+    }
+
+    Process {
+        id: cavaProcess
+        // Re-evaluate running state whenever dependencies change
+        running: root.cavaAvailable && root.refCount > 0 && _internalRestart
+        command: ["bash", "-c", `cat <<'CAVACONF' | cava -p /dev/stdin
+[general]
+framerate=60
+bars=${root.barCount}
+autosens=1
+sensitivity=75
+
+[output]
+method=raw
+raw_target=/dev/stdout
+data_format=ascii
+channels=mono
+mono_option=average
+
+[smoothing]
+noise_reduction=35
+integral=80
+gravity=100
+ignore=0
+monstercat=1
+CAVACONF`]
+
+        onRunningChanged: {
+            if (!running) {
+                // Clear values when stopped to prevent "frozen" look
+                let arr = [];
+                for (let i = 0; i < barCount; i++) arr.push(0);
+                root.values = arr;
+            }
+        }
+
+        stdout: SplitParser {
+            splitMarker: "\n"
+            onRead: data => {
+                if (!data || data.length === 0) return;
+                
+                const parts = data.split(";");
+                if (parts.length >= root.barCount) {
+                    let points = [];
+                    for (let i = 0; i < root.barCount; i++) {
+                        const val = parseInt(parts[i], 10);
+                        points.push(isNaN(val) ? 0 : val);
+                    }
+                    root.values = points;
+                }
+            }
+        }
+    }
+}
