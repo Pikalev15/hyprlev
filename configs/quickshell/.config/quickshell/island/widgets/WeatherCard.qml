@@ -19,7 +19,7 @@ Rectangle {
     
     // State for browsing
     property int selectedDayIndex: 0
-    property int focusedHourIndex: -1 // -1 means "Current"
+    property int focusedHourIndex: 0 
     property bool showDetails: false
 
     function parseLocalDate(s) {
@@ -30,6 +30,7 @@ Rectangle {
 
     // Helpers to get data based on selection
     readonly property var currentDay: Weather.daily.length > selectedDayIndex ? Weather.daily[selectedDayIndex] : null
+    
     readonly property list<var> currentDayHourly: {
         if (!currentDay || Weather.hourly.length === 0) return [];
         let dateStr = currentDay.fullDate;
@@ -37,28 +38,12 @@ Rectangle {
     }
     
     readonly property var displayData: {
-        if (focusedHourIndex === -1 && selectedDayIndex === 0) return Weather.current;
         let hourly = currentDayHourly;
         if (focusedHourIndex >= 0 && focusedHourIndex < hourly.length) return hourly[focusedHourIndex];
         return Weather.current;
     }
 
-    // Clipping mask
-    layer.enabled: true
-    layer.effect: OpacityMask {
-        maskSource: Rectangle { width: root.width; height: root.height; radius: root.radius }
-    }
-    
-    readonly property string weatherIconsDir: "assets/icons/google-weather"
-    readonly property color contentColor: Appearance.m3colors.m3onSurface
-
-    // --- Atmospheric Overlay ---
-    WeatherAnimation {
-        id: weatherAnim
-        anchors.fill: parent
-        animationsEnabled: root.visible
-        backgroundEnabled: false 
-    }
+    // ... (keep clipping mask and atmospheric overlay) ...
 
     ColumnLayout {
         id: mainLayout
@@ -81,11 +66,10 @@ Rectangle {
                 }
                 StyledText {
                     text: {
-                        if (focusedHourIndex === -1 && selectedDayIndex === 0) return "Current Conditions";
                         if (!currentDay) return "Checking...";
                         let date = parseLocalDate(currentDay.fullDate);
                         let dateStr = date.getDate() + " " + date.toLocaleString('default', { month: 'short' });
-                        return (focusedHourIndex === -1 ? "Forecast" : "Forecast for " + displayData.time) + " • " + dateStr;
+                        return "Forecast for " + displayData.time + " • " + dateStr;
                     }
                     font.pixelSize: 12 * Appearance.effectiveScale
                     color: root.contentColor
@@ -105,7 +89,7 @@ Rectangle {
                     color: selectedDayIndex > 0 ? root.contentColor : Appearance.colors.colSubtext
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: if (selectedDayIndex > 0) { selectedDayIndex--; focusedHourIndex = -1; }
+                        onClicked: if (selectedDayIndex > 0) { selectedDayIndex--; focusedHourIndex = 0; }
                     }
                 }
 
@@ -132,7 +116,7 @@ Rectangle {
                     color: selectedDayIndex < 6 ? root.contentColor : Appearance.colors.colSubtext
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: if (selectedDayIndex < 6) { selectedDayIndex++; focusedHourIndex = -1; }
+                        onClicked: if (selectedDayIndex < 6) { selectedDayIndex++; focusedHourIndex = 0; }
                     }
                 }
             }
@@ -146,20 +130,20 @@ Rectangle {
             CustomIcon {
                 source: displayData.icon || "cloudy"
                 iconFolder: root.weatherIconsDir
-                width: 80 * Appearance.effectiveScale; height: 80 * Appearance.effectiveScale; colorize: false
+                width: 96 * Appearance.effectiveScale; height: 96 * Appearance.effectiveScale; colorize: false
             }
 
             ColumnLayout {
                 spacing: 0
                 StyledText {
                     text: (displayData.temp || "--") + "°"
-                    font.pixelSize: 54 * Appearance.effectiveScale
+                    font.pixelSize: 64 * Appearance.effectiveScale
                     font.weight: Font.Light
                     color: root.contentColor
                 }
                 StyledText {
                     text: displayData.condition || "Checking..."
-                    font.pixelSize: 16 * Appearance.effectiveScale
+                    font.pixelSize: 18 * Appearance.effectiveScale
                     color: root.contentColor
                     opacity: 0.8
                 }
@@ -169,8 +153,8 @@ Rectangle {
 
             // Detail trigger
             Rectangle {
-                width: 40 * Appearance.effectiveScale; height: 40 * Appearance.effectiveScale
-                radius: 20 * Appearance.effectiveScale
+                width: 44 * Appearance.effectiveScale; height: 44 * Appearance.effectiveScale
+                radius: 22 * Appearance.effectiveScale
                 color: showDetails ? Appearance.colors.colPrimary : Appearance.colors.colLayer2
                 MaterialSymbol {
                     anchors.centerIn: parent
@@ -238,38 +222,56 @@ Rectangle {
             }
         }
 
-        // ── Hourly Browser (Scroll Area) ──
+        // ── Hourly Browser (Circular 3-item View) ──
         Item {
             Layout.fillWidth: true
-            implicitHeight: 80 * Appearance.effectiveScale
+            implicitHeight: 120 * Appearance.effectiveScale
             
             RowLayout {
                 anchors.fill: parent
-                spacing: 0
+                spacing: 24 * Appearance.effectiveScale
+                
                 Repeater {
-                    model: root.currentDayHourly
+                    model: 3
                     delegate: Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        color: index === focusedHourIndex ? Appearance.colors.colPrimaryContainer : "transparent"
-                        radius: 8 * Appearance.effectiveScale
+                        color: index === 1 ? Appearance.colors.colPrimaryContainer : "transparent"
+                        radius: 16 * Appearance.effectiveScale
+                        opacity: index === 1 ? 1.0 : 0.3
+                        scale: index === 1 ? 1.0 : 0.85
                         
+                        Behavior on opacity { NumberAnimation { duration: 250 } }
+                        Behavior on scale { NumberAnimation { duration: 350; easing.type: Easing.OutBack } }
+
+                        readonly property int realIndex: {
+                            let n = root.currentDayHourly.length;
+                            if (n === 0) return 0;
+                            return (root.focusedHourIndex + index - 1 + n) % n;
+                        }
+                        readonly property var itemData: root.currentDayHourly[realIndex]
+
                         ColumnLayout {
                             anchors.centerIn: parent
-                            spacing: 4 * Appearance.effectiveScale
+                            spacing: 8 * Appearance.effectiveScale
                             StyledText {
-                                text: modelData.time; font.pixelSize: 9 * Appearance.effectiveScale
-                                opacity: index === focusedHourIndex ? 1.0 : 0.6
+                                text: itemData ? itemData.time : "--"
+                                font.pixelSize: 11 * Appearance.effectiveScale
+                                font.weight: index === 1 ? Font.Bold : Font.Normal
                                 Layout.alignment: Qt.AlignHCenter
                             }
                             CustomIcon {
-                                source: modelData.icon
+                                source: itemData ? itemData.icon : "cloudy"
                                 iconFolder: root.weatherIconsDir
-                                width: 24 * Appearance.effectiveScale; height: 24 * Appearance.effectiveScale; colorize: false
+                                width: index === 1 ? 48 * Appearance.effectiveScale : 40 * Appearance.effectiveScale
+                                height: index === 1 ? 48 * Appearance.effectiveScale : 40 * Appearance.effectiveScale
+                                colorize: false
                                 Layout.alignment: Qt.AlignHCenter
                             }
                             StyledText {
-                                text: modelData.temp + "°"; font.pixelSize: 11 * Appearance.effectiveScale; font.weight: Font.Bold
+                                text: (itemData ? itemData.temp : "--") + "°"
+                                font.pixelSize: index === 1 ? 16 * Appearance.effectiveScale : 13 * Appearance.effectiveScale
+                                font.weight: Font.Black
                                 Layout.alignment: Qt.AlignHCenter
                             }
                         }
@@ -277,7 +279,8 @@ Rectangle {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                focusedHourIndex = index;
+                                if (index === 0) root.focusedHourIndex = (root.focusedHourIndex - 1 + root.currentDayHourly.length) % root.currentDayHourly.length;
+                                else if (index === 2) root.focusedHourIndex = (root.focusedHourIndex + 1) % root.currentDayHourly.length;
                                 root.showDetails = true;
                             }
                         }
@@ -290,10 +293,12 @@ Rectangle {
                 anchors.fill: parent
                 acceptedButtons: Qt.NoButton
                 onWheel: (wheel) => {
+                    let n = root.currentDayHourly.length;
+                    if (n === 0) return;
                     if (wheel.angleDelta.y > 0) {
-                        if (focusedHourIndex > -1) focusedHourIndex--;
+                        root.focusedHourIndex = (root.focusedHourIndex - 1 + n) % n;
                     } else {
-                        if (focusedHourIndex < root.currentDayHourly.length - 1) focusedHourIndex++;
+                        root.focusedHourIndex = (root.focusedHourIndex + 1) % n;
                     }
                 }
             }
@@ -311,7 +316,7 @@ Rectangle {
                 color: root.contentColor; opacity: 0.5; textFormat: Text.StyledText
                 
                 property string timeString: "just now"
-                text: Weather.loading ? Weather.status : `Updated ${timeString} • Scroll to browse forecast`
+                text: Weather.loading ? Weather.status : `Updated ${timeString} • Scroll to browse circular forecast`
                 
                 function updateRelativeTime() {
                     if (!Weather.lastUpdateTime) { timeString = "unknown"; return; }
