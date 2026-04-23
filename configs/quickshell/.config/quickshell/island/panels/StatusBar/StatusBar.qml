@@ -1,3 +1,4 @@
+
 import "../../core"
 import "../../core/functions" as Functions
 import "../../services"
@@ -37,7 +38,7 @@ Scope {
             Rectangle {
                 id: islandPill
                 anchors.centerIn: parent
-                width: 225 * Appearance.effectiveScale
+                width: 200 * Appearance.effectiveScale
                 height: Appearance.sizes.statusBarHeight
                 color: "black"
                 radius: height / 2

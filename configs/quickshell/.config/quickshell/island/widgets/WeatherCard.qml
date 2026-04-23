@@ -9,8 +9,7 @@ import Quickshell
 import "./weather"
 
 /**
- * Weather widget with Android 16 aesthetics.
- * Features full-card atmospheric animations and a clean M3 surface.
+ * Advanced Weather widget with Nandroid aesthetics and browsing features.
  */
 Rectangle {
     id: root
@@ -18,22 +17,40 @@ Rectangle {
     radius: Appearance.rounding.card
     color: Appearance.m3colors.m3surfaceContainerLow
     
-    // Clipping mask to ensure animations respect card corners
+    // State for browsing
+    property int selectedDayIndex: 0
+    property int focusedHourIndex: -1 // -1 means "Current"
+    property bool showDetails: false
+
+    function parseLocalDate(s) {
+        if (!s) return new Date();
+        let p = s.split(/\D/);
+        return new Date(p[0], p[1]-1, p[2]);
+    }
+
+    // Helpers to get data based on selection
+    readonly property var currentDay: Weather.daily.length > selectedDayIndex ? Weather.daily[selectedDayIndex] : null
+    readonly property list<var> currentDayHourly: {
+        if (!currentDay || Weather.hourly.length === 0) return [];
+        let dateStr = currentDay.fullDate;
+        return Weather.hourly.filter(h => h.fullTime.startsWith(dateStr));
+    }
+    
+    readonly property var displayData: {
+        if (focusedHourIndex === -1 && selectedDayIndex === 0) return Weather.current;
+        let hourly = currentDayHourly;
+        if (focusedHourIndex >= 0 && focusedHourIndex < hourly.length) return hourly[focusedHourIndex];
+        return Weather.current;
+    }
+
+    // Clipping mask
     layer.enabled: true
     layer.effect: OpacityMask {
-        maskSource: Rectangle {
-            width: root.width
-            height: root.height
-            radius: root.radius
-        }
+        maskSource: Rectangle { width: root.width; height: root.height; radius: root.radius }
     }
     
     readonly property string weatherIconsDir: "assets/icons/google-weather"
-    readonly property bool showDailyForecast: Config.options.weather ? Config.options.weather.showDailyForecast : true
-    
     readonly property color contentColor: Appearance.m3colors.m3onSurface
-    readonly property real midOpacity: 0.8
-    readonly property real lowOpacity: 0.6
 
     // --- Atmospheric Overlay ---
     WeatherAnimation {
@@ -46,169 +63,266 @@ Rectangle {
     ColumnLayout {
         id: mainLayout
         anchors.fill: parent
-        spacing: 0
+        spacing: 16 * Appearance.effectiveScale
+        anchors.margins: 20 * Appearance.effectiveScale
 
-        // ── Top Section: Primary Conditions ──
+        // ── Header: Location & Date Selector ──
         RowLayout {
             Layout.fillWidth: true
-            Layout.margins: 20 * Appearance.effectiveScale
-            Layout.bottomMargin: 12 * Appearance.effectiveScale
-            spacing: 0 
-
-            ColumnLayout {
-                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                spacing: 6 * Appearance.effectiveScale
-                
-                RowLayout {
-                    spacing: 8 * Appearance.effectiveScale
-                    CustomIcon {
-                        source: Weather.current.icon
-                        iconFolder: root.weatherIconsDir
-                        width: 32 * Appearance.effectiveScale; height: 32 * Appearance.effectiveScale; colorize: false
-                    }
-                    StyledText {
-                        text: Weather.loading ? "Updating..." : Weather.current.condition
-                        font.pixelSize: Appearance.font.pixelSize.large
-                        font.weight: Font.Medium
-                        color: root.contentColor
-                    }
-                }
-
-                StyledText {
-                    text: `Feels like ${Weather.current.feelsLike}°`
-                    font.pixelSize: Appearance.font.pixelSize.normal
-                    color: root.contentColor
-                    opacity: root.midOpacity
-                }
-
-                StyledText {
-                    text: `${Weather.todayHigh}° · ${Weather.todayLow}°`
-                    font.pixelSize: Appearance.font.pixelSize.normal
-                    color: root.contentColor
-                    opacity: root.lowOpacity
-                }
-            }
-
-            Item { Layout.fillWidth: true } 
-
-            StyledText {
-                text: Weather.current.temp + "°"
-                font.pixelSize: 64 * Appearance.effectiveScale
-                font.weight: Font.Normal
-                color: root.contentColor
-                Layout.alignment: Qt.AlignTop | Qt.AlignRight
-            }
-        }
-
-        // ── Middle Section: Hourly (Transparent) ──
-        Item {
-            Layout.fillWidth: true
-            implicitHeight: hourlyCol.implicitHeight + 32 * Appearance.effectiveScale
-            
-            ColumnLayout {
-                id: hourlyCol
-                anchors.fill: parent
-                anchors.leftMargin: 20 * Appearance.effectiveScale; anchors.rightMargin: 20 * Appearance.effectiveScale
-                anchors.topMargin: 16 * Appearance.effectiveScale; anchors.bottomMargin: 16 * Appearance.effectiveScale
-                
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 0
-                    Repeater {
-                        model: Weather.hourly
-                        delegate: ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.preferredWidth: 0
-                            spacing: 8 * Appearance.effectiveScale
-                            StyledText {
-                                text: modelData.temp + "°"; font.pixelSize: Appearance.font.pixelSize.small
-                                font.weight: Font.Medium; color: root.contentColor; Layout.alignment: Qt.AlignHCenter
-                            }
-                            CustomIcon {
-                                source: modelData.icon; iconFolder: root.weatherIconsDir
-                                width: 28 * Appearance.effectiveScale; height: 28 * Appearance.effectiveScale; colorize: false; Layout.alignment: Qt.AlignHCenter
-                            }
-                            StyledText {
-                                text: index === 0 ? "Now" : modelData.time
-                                font.pixelSize: Appearance.font.pixelSize.smallest; color: root.contentColor; opacity: root.lowOpacity
-                                Layout.alignment: Qt.AlignHCenter; horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // ── Bottom Section: Daily (Transparent) ──
-        Item {
-            visible: Weather.daily.length > 0
-            Layout.fillWidth: true
-            implicitHeight: dailyCol.implicitHeight + 24 * Appearance.effectiveScale
-            
-            ColumnLayout {
-                id: dailyCol
-                anchors.fill: parent
-                anchors.leftMargin: 20 * Appearance.effectiveScale; anchors.rightMargin: 20 * Appearance.effectiveScale
-                anchors.topMargin: 12 * Appearance.effectiveScale; anchors.bottomMargin: 12 * Appearance.effectiveScale
-                spacing: 8 * Appearance.effectiveScale
-                Repeater {
-                    model: root.showDailyForecast ? Weather.daily : Weather.daily.slice(0, 1)
-                    delegate: RowLayout {
-                        Layout.fillWidth: true
-                        Layout.leftMargin: 8 * Appearance.effectiveScale; Layout.rightMargin: 8 * Appearance.effectiveScale
-                        spacing: 12 * Appearance.effectiveScale
-                        StyledText {
-                            text: modelData.date; font.pixelSize: Appearance.font.pixelSize.small
-                            color: root.contentColor; Layout.fillWidth: true
-                        }
-                        StyledText {
-                            text: `${modelData.maxTemp}° ${modelData.minTemp}°`
-                            font.pixelSize: Appearance.font.pixelSize.small; color: root.contentColor; opacity: root.midOpacity
-                        }
-                        CustomIcon {
-                            source: modelData.icon; iconFolder: root.weatherIconsDir
-                            width: 24 * Appearance.effectiveScale; height: 24 * Appearance.effectiveScale; colorize: false
-                        }
-                    }
-                }
-            }
-        }
-
-        // ── Footer Section: Status ──
-        ColumnLayout {
-            Layout.fillWidth: true
             spacing: 0
-            Layout.topMargin: 4 * Appearance.effectiveScale
-            Layout.bottomMargin: 16 * Appearance.effectiveScale
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 20 * Appearance.effectiveScale
-                
+            ColumnLayout {
+                spacing: 2 * Appearance.effectiveScale
                 StyledText {
-                    id: timestampText
-                    anchors.centerIn: parent
-                    font.pixelSize: 9 * Appearance.effectiveScale
-                    color: root.contentColor; opacity: root.lowOpacity; textFormat: Text.StyledText
-                    
-                    property string timeString: "just now"
-                    text: Weather.loading ? Weather.status : `Updated ${timeString}, click to refresh`
-                    
-                    function updateRelativeTime() {
-                        if (!Weather.lastUpdateTime) { timeString = "unknown"; return; }
-                        let diff = Math.floor((new Date() - Weather.lastUpdateTime) / 60000);
-                        if (diff < 1) timeString = "just now";
-                        else if (diff < 60) timeString = diff + " mins ago";
-                        else timeString = Math.floor(diff / 60) + " hours ago";
+                    text: Weather.location
+                    font.pixelSize: 18 * Appearance.effectiveScale
+                    font.weight: Font.Bold
+                    color: root.contentColor
+                }
+                StyledText {
+                    text: {
+                        if (focusedHourIndex === -1 && selectedDayIndex === 0) return "Current Conditions";
+                        if (!currentDay) return "Checking...";
+                        let date = parseLocalDate(currentDay.fullDate);
+                        let dateStr = date.getDate() + " " + date.toLocaleString('default', { month: 'short' });
+                        return (focusedHourIndex === -1 ? "Forecast" : "Forecast for " + displayData.time) + " • " + dateStr;
                     }
-                    Timer { interval: 60000; running: true; repeat: true; onTriggered: timestampText.updateRelativeTime(); triggeredOnStart: true }
+                    font.pixelSize: 12 * Appearance.effectiveScale
+                    color: root.contentColor
+                    opacity: 0.7
+                }
+            }
+
+            Item { Layout.fillWidth: true }
+
+            // Date Selector: < {dd mm} >
+            RowLayout {
+                spacing: 8 * Appearance.effectiveScale
+                
+                MaterialSymbol {
+                    text: "chevron_left"
+                    iconSize: 20 * Appearance.effectiveScale
+                    color: selectedDayIndex > 0 ? root.contentColor : Appearance.colors.colSubtext
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: if (selectedDayIndex > 0) { selectedDayIndex--; focusedHourIndex = -1; }
+                    }
                 }
 
+                Rectangle {
+                    implicitWidth: 80 * Appearance.effectiveScale
+                    implicitHeight: 28 * Appearance.effectiveScale
+                    radius: 14 * Appearance.effectiveScale
+                    color: Appearance.colors.colLayer2
+                    StyledText {
+                        anchors.centerIn: parent
+                        text: {
+                            if (!currentDay) return "--";
+                            let d = parseLocalDate(currentDay.fullDate);
+                            return d.getDate() + " " + d.toLocaleString('default', { month: 'short' });
+                        }
+                        font.pixelSize: 12 * Appearance.effectiveScale
+                        font.weight: Font.Medium
+                    }
+                }
+
+                MaterialSymbol {
+                    text: "chevron_right"
+                    iconSize: 20 * Appearance.effectiveScale
+                    color: selectedDayIndex < 6 ? root.contentColor : Appearance.colors.colSubtext
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: if (selectedDayIndex < 6) { selectedDayIndex++; focusedHourIndex = -1; }
+                    }
+                }
+            }
+        }
+
+        // ── Primary Info (Large Display) ──
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 20 * Appearance.effectiveScale
+
+            CustomIcon {
+                source: displayData.icon || "cloudy"
+                iconFolder: root.weatherIconsDir
+                width: 80 * Appearance.effectiveScale; height: 80 * Appearance.effectiveScale; colorize: false
+            }
+
+            ColumnLayout {
+                spacing: 0
+                StyledText {
+                    text: (displayData.temp || "--") + "°"
+                    font.pixelSize: 54 * Appearance.effectiveScale
+                    font.weight: Font.Light
+                    color: root.contentColor
+                }
+                StyledText {
+                    text: displayData.condition || "Checking..."
+                    font.pixelSize: 16 * Appearance.effectiveScale
+                    color: root.contentColor
+                    opacity: 0.8
+                }
+            }
+
+            Item { Layout.fillWidth: true }
+
+            // Detail trigger
+            Rectangle {
+                width: 40 * Appearance.effectiveScale; height: 40 * Appearance.effectiveScale
+                radius: 20 * Appearance.effectiveScale
+                color: showDetails ? Appearance.colors.colPrimary : Appearance.colors.colLayer2
+                MaterialSymbol {
+                    anchors.centerIn: parent
+                    text: showDetails ? "expand_less" : "expand_more"
+                    color: showDetails ? "white" : root.contentColor
+                }
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: Weather.fetch()
+                    onClicked: root.showDetails = !root.showDetails
                 }
             }
+        }
+
+        // ── Details Segment (Animated) ──
+        ColumnLayout {
+            id: detailSegment
+            visible: root.showDetails
+            Layout.fillWidth: true
+            spacing: 12 * Appearance.effectiveScale
+            clip: true
+            
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1 * Appearance.effectiveScale
+                color: root.contentColor
+                opacity: 0.1
+            }
+
+            GridLayout {
+                columns: 3
+                Layout.fillWidth: true
+                rowSpacing: 10 * Appearance.effectiveScale
+
+                // Detail Items
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "HUMIDITY"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (displayData.humidity || "--") + "%"; font.weight: Font.Medium }
+                }
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "WIND"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (displayData.windSpeed || "--") + " km/h"; font.weight: Font.Medium }
+                }
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "CLOUDS"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (displayData.cloudCover !== undefined ? displayData.cloudCover : "--") + "%"; font.weight: Font.Medium }
+                }
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "RAIN"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (displayData.precipProb !== undefined ? displayData.precipProb : (currentDay?.precipSum || "0")) + "%"; font.weight: Font.Medium }
+                }
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "FEELS LIKE"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (displayData.feelsLike || "--") + "°"; font.weight: Font.Medium }
+                }
+                ColumnLayout {
+                    spacing: 2 * Appearance.effectiveScale
+                    StyledText { text: "RANGE"; font.pixelSize: 9 * Appearance.effectiveScale; font.weight: Font.Bold; opacity: 0.6 }
+                    StyledText { text: (currentDay?.maxTemp || "--") + "° / " + (currentDay?.minTemp || "--") + "°"; font.weight: Font.Medium }
+                }
+            }
+        }
+
+        // ── Hourly Browser (Scroll Area) ──
+        Item {
+            Layout.fillWidth: true
+            implicitHeight: 80 * Appearance.effectiveScale
+            
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
+                Repeater {
+                    model: root.currentDayHourly
+                    delegate: Rectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: index === focusedHourIndex ? Appearance.colors.colPrimaryContainer : "transparent"
+                        radius: 8 * Appearance.effectiveScale
+                        
+                        ColumnLayout {
+                            anchors.centerIn: parent
+                            spacing: 4 * Appearance.effectiveScale
+                            StyledText {
+                                text: modelData.time; font.pixelSize: 9 * Appearance.effectiveScale
+                                opacity: index === focusedHourIndex ? 1.0 : 0.6
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+                            CustomIcon {
+                                source: modelData.icon
+                                iconFolder: root.weatherIconsDir
+                                width: 24 * Appearance.effectiveScale; height: 24 * Appearance.effectiveScale; colorize: false
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+                            StyledText {
+                                text: modelData.temp + "°"; font.pixelSize: 11 * Appearance.effectiveScale; font.weight: Font.Bold
+                                Layout.alignment: Qt.AlignHCenter
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                focusedHourIndex = index;
+                                root.showDetails = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Scroll Handling
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                onWheel: (wheel) => {
+                    if (wheel.angleDelta.y > 0) {
+                        if (focusedHourIndex > -1) focusedHourIndex--;
+                    } else {
+                        if (focusedHourIndex < root.currentDayHourly.length - 1) focusedHourIndex++;
+                    }
+                }
+            }
+        }
+
+        // ── Footer ──
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 20 * Appearance.effectiveScale
+            
+            StyledText {
+                id: timestampText
+                anchors.centerIn: parent
+                font.pixelSize: 9 * Appearance.effectiveScale
+                color: root.contentColor; opacity: 0.5; textFormat: Text.StyledText
+                
+                property string timeString: "just now"
+                text: Weather.loading ? Weather.status : `Updated ${timeString} • Scroll to browse forecast`
+                
+                function updateRelativeTime() {
+                    if (!Weather.lastUpdateTime) { timeString = "unknown"; return; }
+                    let diff = Math.floor((new Date() - Weather.lastUpdateTime) / 60000);
+                    if (diff < 1) timeString = "just now";
+                    else if (diff < 60) timeString = diff + " mins ago";
+                    else timeString = Math.floor(diff / 60) + " hours ago";
+                }
+                Timer { interval: 60000; running: true; repeat: true; onTriggered: timestampText.updateRelativeTime(); triggeredOnStart: true }
+            }
+            MouseArea { anchors.fill: parent; onClicked: Weather.fetch() }
         }
     }
 }

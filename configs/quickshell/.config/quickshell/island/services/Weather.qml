@@ -287,7 +287,7 @@ Singleton {
             if (!lat || !lon) return ["true"];
             const tempUnit = root.unit === "F" ? "&temperature_unit=fahrenheit" : "";
             const windUnit = root.unit === "F" ? "&wind_speed_unit=mph" : "&wind_speed_unit=kmh";
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${tempUnit}${windUnit}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${tempUnit}${windUnit}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,cloud_cover,precipitation_probability,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&forecast_days=7`;
             return ["sh", "-c", 'mkdir -p "$1" && curl -sfL -m 15 "$2" > "$3.tmp" && jq -e . "$3.tmp" >/dev/null 2>&1 && mv "$3.tmp" "$3" && cat "$3"', "sh", root.cacheDir, url, root.cachePath];
         }
         
@@ -418,17 +418,17 @@ Singleton {
 
         let hourlyList = [];
         if (hourly && hourly.time) {
-            const now = new Date();
-            const nowIdx = hourly.time.findIndex(t => new Date(t) > now) || 0;
-            const startIdx = Math.max(0, nowIdx - 1);
-            
-            for (let i = startIdx; i < startIdx + 6; i++) {
-                if (!hourly.time[i]) break;
+            for (let i = 0; i < hourly.time.length; i++) {
                 hourlyList.push({
                     time: formatHour(((new Date(hourly.time[i]).getHours()) * 100).toString()),
+                    fullTime: hourly.time[i],
                     temp: Math.round(hourly.temperature_2m[i]).toString(),
-                    icon: mapWeatherIcon(wmoToWwo(hourly.weather_code[i]), i >= startIdx && i <= startIdx + 12 ? cur.is_day === 1 : true),
-                    condition: wmoToDesc(hourly.weather_code[i])
+                    icon: mapWeatherIcon(wmoToWwo(hourly.weather_code[i]), true), // Default to day icons for simplicity in browsing
+                    condition: wmoToDesc(hourly.weather_code[i]),
+                    cloudCover: hourly.cloud_cover[i],
+                    precipProb: hourly.precipitation_probability[i],
+                    humidity: hourly.relative_humidity_2m[i],
+                    windSpeed: hourly.wind_speed_10m[i]
                 });
             }
         }
@@ -436,11 +436,13 @@ Singleton {
 
         let dailyList = [];
         if (daily && daily.time) {
-            for (let i = 0; i < Math.min(daily.time.length, 3); i++) {
+            for (let i = 0; i < daily.time.length; i++) {
                 dailyList.push({
                     date: i === 0 ? "Today" : formatDate(daily.time[i]),
+                    fullDate: daily.time[i],
                     maxTemp: Math.round(daily.temperature_2m_max[i]).toString(),
                     minTemp: Math.round(daily.temperature_2m_min[i]).toString(),
+                    precipSum: daily.precipitation_sum[i],
                     icon: mapWeatherIcon(wmoToWwo(daily.weather_code[i]), true)
                 });
             }

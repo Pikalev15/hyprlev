@@ -52,7 +52,7 @@ Item {
     readonly property int tabStripWidth: tabButtonSize + 16 * Appearance.effectiveScale
 
     readonly property int panelWidth: 800 * Appearance.effectiveScale
-    property int panelHeight: currentTab === 2 ? 650 * Appearance.effectiveScale : 450 * Appearance.effectiveScale
+    property int panelHeight: (currentTab === 1 || currentTab === 2) ? 650 * Appearance.effectiveScale : 450 * Appearance.effectiveScale
     Behavior on panelHeight { NumberAnimation { duration: 400; easing.type: Easing.OutBack } }
 
     implicitWidth: panelWidth
@@ -199,7 +199,7 @@ Item {
                                     anchors.top: parent.top
                                     anchors.right: parent.right
                                     anchors.margins: 4 * Appearance.effectiveScale
-                                    text: Math.round(SystemData.memUsage * 100) + "%"
+                                    text: Math.round(SystemData.memUsage * 100) + "% (" + (SystemData.usedMemoryMB / 1024).toFixed(1) + " / " + Math.round(SystemData.totalMemoryMB / 1024) + " GB)"
                                     font.pixelSize: 12 * Appearance.effectiveScale
                                     font.weight: Font.Bold
                                     color: Appearance.colors.colTertiary
@@ -259,11 +259,24 @@ Item {
                             StyledText { text: SystemData.uptime + " uptime" }
                             StyledText { text: "Kernel: " + SystemInfo.kernel; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
                         }
+
+                        // Battery Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            visible: Battery.available
+                            StyledText { text: "BATTERY"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colPrimary }
+                            StyledText { text: Battery.percentageText + (Battery.isCharging ? " (Charging)" : (Battery.isPluggedIn ? " (Plugged)" : "")) }
+                            StyledText { 
+                                text: Battery.voltage.toFixed(2) + "V • " + Math.abs(Battery.energyRate).toFixed(1) + "W"
+                                font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext 
+                            }
+                        }
                         
                         // Updates Stats
                         ColumnLayout {
-                            spacing: 4 * Appearance.effectiveScale
+                            Layout.columnSpan: 3
                             Layout.fillWidth: true
+                            spacing: 4 * Appearance.effectiveScale
                             
                             RowLayout {
                                 spacing: 8 * Appearance.effectiveScale
