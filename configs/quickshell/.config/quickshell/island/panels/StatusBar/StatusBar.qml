@@ -37,11 +37,12 @@ Scope {
             Rectangle {
                 id: islandPill
                 anchors.centerIn: parent
-                width: 300 * Appearance.effectiveScale
+                width: 225 * Appearance.effectiveScale
                 height: Appearance.sizes.statusBarHeight
                 color: "black"
                 radius: height / 2
                 
+                // Replace MusicHoverMenu trigger with MediaNotchPopup trigger logic
                 Timer {
                     id: musicMenuDelayTimer
                     interval: 300

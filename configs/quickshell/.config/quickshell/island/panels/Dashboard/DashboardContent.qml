@@ -52,7 +52,8 @@ Item {
     readonly property int tabStripWidth: tabButtonSize + 16 * Appearance.effectiveScale
 
     readonly property int panelWidth: 800 * Appearance.effectiveScale
-    readonly property int panelHeight: 400 * Appearance.effectiveScale
+    property int panelHeight: currentTab === 2 ? 650 * Appearance.effectiveScale : 450 * Appearance.effectiveScale
+    Behavior on panelHeight { NumberAnimation { duration: 400; easing.type: Easing.OutBack } }
 
     implicitWidth: panelWidth
     implicitHeight: panelHeight
@@ -157,33 +158,187 @@ Item {
 
                 // Tab 0: Performance
                 ColumnLayout {
-                    spacing: 12 * Appearance.effectiveScale
-                    StyledText { text: "System Performance"; font.pixelSize: 20 * Appearance.effectiveScale; font.weight: Font.Bold }
+                    spacing: 16 * Appearance.effectiveScale
                     
+                    RowLayout {
+                        spacing: 16 * Appearance.effectiveScale
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            StyledText { text: "CPU Usage"; font.pixelSize: 14 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                            Item {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 100 * Appearance.effectiveScale
+                                PerformanceGraph {
+                                    anchors.fill: parent
+                                    history: SystemData.cpuHistory
+                                    color: Appearance.colors.colPrimary
+                                }
+                                StyledText {
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
+                                    anchors.margins: 4 * Appearance.effectiveScale
+                                    text: Math.round(SystemData.cpuUsage * 100) + "%"
+                                    font.pixelSize: 12 * Appearance.effectiveScale
+                                    font.weight: Font.Bold
+                                    color: Appearance.colors.colPrimary
+                                }
+                            }
+                        }
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            StyledText { text: "RAM Usage"; font.pixelSize: 14 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                            Item {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 100 * Appearance.effectiveScale
+                                PerformanceGraph {
+                                    anchors.fill: parent
+                                    history: SystemData.memHistory
+                                    color: Appearance.colors.colTertiary
+                                }
+                                StyledText {
+                                    anchors.top: parent.top
+                                    anchors.right: parent.right
+                                    anchors.margins: 4 * Appearance.effectiveScale
+                                    text: Math.round(SystemData.memUsage * 100) + "%"
+                                    font.pixelSize: 12 * Appearance.effectiveScale
+                                    font.weight: Font.Bold
+                                    color: Appearance.colors.colTertiary
+                                }
+                            }
+                        }
+                    }
+
                     GridLayout {
-                        columns: 2
-                        StyledText { text: "CPU Usage:" }
-                        StyledProgressBar { value: SystemData.cpuUsage; Layout.fillWidth: true }
+                        columns: 3
+                        rowSpacing: 16 * Appearance.effectiveScale
+                        columnSpacing: 32 * Appearance.effectiveScale
+                        Layout.fillWidth: true
+
+                        // CPU Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            StyledText { text: "CPU"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colPrimary }
+                            StyledText { text: (SystemData.cpuUsage * 100).toFixed(1) + "% (" + Math.round(SystemData.cpuTemperature) + "°C)" }
+                            StyledText { text: SystemData.cpuModel; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext; elide: Text.ElideRight; Layout.maximumWidth: 150 * Appearance.effectiveScale }
+                        }
+
+                        // GPU Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            StyledText { text: "GPU"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colSecondary }
+                            StyledText { 
+                                text: SystemData.hasValidGpuData && SystemData.availableGpus.length > 0 ? 
+                                    Math.round(SystemData.availableGpus[0].temp) + "°C" : "No Temp" 
+                            }
+                            StyledText { 
+                                text: SystemData.availableGpus.length > 0 ? SystemData.availableGpus[0].name : "N/A"
+                                font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext; elide: Text.ElideRight; Layout.maximumWidth: 150 * Appearance.effectiveScale 
+                            }
+                        }
+
+                        // RAM Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            StyledText { text: "RAM"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colTertiary }
+                            StyledText { text: (SystemData.usedMemoryMB / 1024).toFixed(1) + " / " + (SystemData.totalMemoryMB / 1024).toFixed(1) + " GB" }
+                            StyledText { text: (SystemData.memUsage * 100).toFixed(1) + "% utilized"; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                        }
+
+                        // Disk Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            StyledText { text: "DISK"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colSuccess }
+                            StyledText { text: SystemData.diskStats.length > 0 ? (SystemData.diskStats[0].usage * 100).toFixed(1) + "% used" : "N/A" }
+                            StyledText { text: SystemData.diskStats.length > 0 ? SystemData.diskStats[0].label : "/"; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                        }
+
+                        // Session Stats
+                        ColumnLayout {
+                            spacing: 2 * Appearance.effectiveScale
+                            StyledText { text: "SESSION"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colWarning }
+                            StyledText { text: SystemData.uptime + " uptime" }
+                            StyledText { text: "Kernel: " + SystemInfo.kernel; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                        }
                         
-                        StyledText { text: "Memory:" }
-                        StyledProgressBar { value: SystemData.memUsage; Layout.fillWidth: true }
-                        
-                        StyledText { text: "Uptime:" }
-                        StyledText { text: SystemData.uptime }
+                        // Updates Stats
+                        ColumnLayout {
+                            spacing: 4 * Appearance.effectiveScale
+                            Layout.fillWidth: true
+                            
+                            RowLayout {
+                                spacing: 8 * Appearance.effectiveScale
+                                MaterialSymbol { text: "package"; iconSize: 18 * Appearance.effectiveScale; color: Appearance.colors.colError }
+                                StyledText { text: "UPDATES"; font.weight: Font.Bold; font.pixelSize: 12 * Appearance.effectiveScale; color: Appearance.colors.colError }
+                            }
+
+                            RowLayout {
+                                spacing: 12 * Appearance.effectiveScale
+                                Layout.fillWidth: true
+
+                                ColumnLayout {
+                                    spacing: 0
+                                    StyledText { text: SessionService.upgradeCount + " Pending"; font.pixelSize: 13 * Appearance.effectiveScale; font.weight: Font.Bold }
+                                    StyledText { text: SessionService.packageCount + " installed"; font.pixelSize: 10 * Appearance.effectiveScale; color: Appearance.colors.colSubtext }
+                                }
+
+                                Item { Layout.fillWidth: true }
+
+                                RippleButton {
+                                    visible: SessionService.upgradeCount > 0
+                                    implicitWidth: 80 * Appearance.effectiveScale
+                                    implicitHeight: 32 * Appearance.effectiveScale
+                                    buttonRadius: 8 * Appearance.effectiveScale
+                                    colBackground: Appearance.colors.colError
+                                    colRipple: Appearance.colors.colOnError
+                                    onClicked: SessionService.update()
+                                    
+                                    RowLayout {
+                                        anchors.centerIn: parent
+                                        spacing: 4 * Appearance.effectiveScale
+                                        MaterialSymbol { text: "upgrade"; iconSize: 16 * Appearance.effectiveScale; color: "white" }
+                                        StyledText { text: "Update"; font.pixelSize: 11 * Appearance.effectiveScale; font.weight: Font.Bold; color: "white" }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     // Power Profiles
-                    RowLayout {
+                    ColumnLayout {
                         spacing: 8 * Appearance.effectiveScale
-                        Repeater {
-                            model: ["daily", "balanced", "performance"]
-                            delegate: Rectangle {
-                                width: 80 * Appearance.effectiveScale
-                                height: 32 * Appearance.effectiveScale
-                                radius: 8 * Appearance.effectiveScale
-                                color: PowerProfileService.currentProfile === modelData ? Appearance.colors.colPrimaryContainer : Appearance.colors.colLayer2
-                                StyledText { anchors.centerIn: parent; text: modelData; font.pixelSize: 12 * Appearance.effectiveScale }
-                                MouseArea { anchors.fill: parent; onClicked: PowerProfileService.setProfile(modelData) }
+                        StyledText { text: "Power Management"; font.pixelSize: 14 * Appearance.effectiveScale; font.weight: Font.Bold }
+                        RowLayout {
+                            spacing: 12 * Appearance.effectiveScale
+                            Repeater {
+                                model: ["daily", "balanced", "performance"]
+                                delegate: Rectangle {
+                                    width: 120 * Appearance.effectiveScale
+                                    height: 40 * Appearance.effectiveScale
+                                    radius: 10 * Appearance.effectiveScale
+                                    color: PowerProfileService.currentProfile === modelData ? Appearance.colors.colPrimaryContainer : Appearance.colors.colLayer2
+                                    border.width: 1
+                                    border.color: PowerProfileService.currentProfile === modelData ? Appearance.colors.colPrimary : "transparent"
+                                    
+                                    RowLayout {
+                                        anchors.centerIn: parent
+                                        spacing: 8 * Appearance.effectiveScale
+                                        MaterialSymbol {
+                                            text: modelData === "daily" ? "eco" : (modelData === "balanced" ? "balance" : "bolt")
+                                            iconSize: 18 * Appearance.effectiveScale
+                                            color: PowerProfileService.currentProfile === modelData ? Appearance.colors.colOnPrimaryContainer : Appearance.colors.colSubtext
+                                        }
+                                        StyledText { 
+                                            text: modelData === "daily" ? "Power Saver" : (modelData === "balanced" ? "Balanced" : "Performance")
+                                            font.pixelSize: 12 * Appearance.effectiveScale
+                                            font.weight: PowerProfileService.currentProfile === modelData ? Font.Bold : Font.Normal
+                                            color: PowerProfileService.currentProfile === modelData ? Appearance.colors.colOnPrimaryContainer : Appearance.colors.colOnLayer0
+                                        }
+                                    }
+                                    MouseArea { 
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor;
+                                        onClicked: PowerProfileService.setProfile(modelData) 
+                                    }
+                                }
                             }
                         }
                     }
@@ -197,165 +352,9 @@ Item {
                 }
 
                 // Tab 2: Music
-                RowLayout {
-                    spacing: 32 * Appearance.effectiveScale
-                    
-                    // Left Side: Player
-                    ColumnLayout {
-                        Layout.preferredWidth: 350 * Appearance.effectiveScale
-                        spacing: 16 * Appearance.effectiveScale
-                        
-                        RowLayout {
-                            spacing: 16 * Appearance.effectiveScale
-                            
-                            // Rotating Record
-                            Rectangle {
-                                width: 120 * Appearance.effectiveScale
-                                height: 120 * Appearance.effectiveScale
-                                radius: width / 2
-                                color: "black"
-                                border.width: 3 * Appearance.effectiveScale
-                                border.color: MprisController.dynPrimary
-                                clip: true
-                                
-                                Image {
-                                    anchors.fill: parent
-                                    source: MprisController.displayedArtFilePath || ""
-                                    fillMode: Image.PreserveAspectCrop
-                                    
-                                    RotationAnimation on rotation {
-                                        from: 0; to: 360; duration: 5000; loops: Animation.Infinite; running: MprisController.isPlaying
-                                    }
-                                }
-                                
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: 15 * Appearance.effectiveScale
-                                    height: 15 * Appearance.effectiveScale
-                                    radius: width / 2
-                                    color: Appearance.m3colors.m3surfaceContainerLow
-                                }
-                            }
-                            
-                            ColumnLayout {
-                                spacing: 4 * Appearance.effectiveScale
-                                StyledText {
-                                    text: MprisController.trackTitle
-                                    font.pixelSize: 18 * Appearance.effectiveScale
-                                    font.weight: Font.Bold
-                                    color: Appearance.colors.colOnLayer0
-                                    Layout.maximumWidth: 200 * Appearance.effectiveScale
-                                    elide: Text.ElideRight
-                                }
-                                StyledText {
-                                    text: MprisController.trackArtist
-                                    font.pixelSize: 14 * Appearance.effectiveScale
-                                    color: MprisController.dynSubtext
-                                }
-                                
-                                RowLayout {
-                                    spacing: 12 * Appearance.effectiveScale
-                                    RippleButton {
-                                        implicitWidth: 36 * Appearance.effectiveScale; implicitHeight: 36 * Appearance.effectiveScale
-                                        buttonRadius: 18 * Appearance.effectiveScale
-                                        onClicked: MprisController.previous()
-                                        MaterialSymbol { anchors.centerIn: parent; text: "skip_previous"; iconSize: 24 * Appearance.effectiveScale }
-                                    }
-                                    RippleButton {
-                                        implicitWidth: 44 * Appearance.effectiveScale; implicitHeight: 44 * Appearance.effectiveScale
-                                        buttonRadius: 22 * Appearance.effectiveScale
-                                        colBackground: MprisController.dynPrimary
-                                        onClicked: MprisController.togglePlaying()
-                                        MaterialSymbol { 
-                                            anchors.centerIn: parent; text: MprisController.isPlaying ? "pause" : "play_arrow"; 
-                                            iconSize: 28 * Appearance.effectiveScale; color: MprisController.dynOnPrimary
-                                        }
-                                    }
-                                    RippleButton {
-                                        implicitWidth: 36 * Appearance.effectiveScale; implicitHeight: 36 * Appearance.effectiveScale
-                                        buttonRadius: 18 * Appearance.effectiveScale
-                                        onClicked: MprisController.next()
-                                        MaterialSymbol { anchors.centerIn: parent; text: "skip_next"; iconSize: 24 * Appearance.effectiveScale }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 2 * Appearance.effectiveScale
-                            StyledSlider {
-                                Layout.fillWidth: true
-                                value: MprisController.position
-                                to: MprisController.length
-                                enabled: false
-                            }
-                            RowLayout {
-                                StyledText { text: Functions.StringUtils.friendlyTimeForSeconds(MprisController.position); font.pixelSize: 10 * Appearance.effectiveScale }
-                                Item { Layout.fillWidth: true }
-                                StyledText { text: Functions.StringUtils.friendlyTimeForSeconds(MprisController.length); font.pixelSize: 10 * Appearance.effectiveScale }
-                            }
-                        }
-
-                        MusicWidget {
-                            Layout.fillWidth: true
-                        }
-                    }
-
-                    // Right Side: Equalizer
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 12 * Appearance.effectiveScale
-                        
-                        RowLayout {
-                            StyledText { text: "Equalizer: " + root.eqData.preset; font.pixelSize: 16 * Appearance.effectiveScale; font.weight: Font.Bold; Layout.fillWidth: true }
-                            RippleButton {
-                                implicitWidth: 80 * Appearance.effectiveScale; implicitHeight: 28 * Appearance.effectiveScale
-                                buttonRadius: 14 * Appearance.effectiveScale
-                                onClicked: execEq("$HOME/.config/hypr/scripts/quickshell/music/equalizer.sh apply")
-                                StyledText { anchors.centerIn: parent; text: "Apply"; font.pixelSize: 12 * Appearance.effectiveScale }
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 150 * Appearance.effectiveScale
-                            spacing: 8 * Appearance.effectiveScale
-                            
-                            Repeater {
-                                model: 10
-                                delegate: ColumnLayout {
-                                    spacing: 4 * Appearance.effectiveScale
-                                    Slider {
-                                        orientation: Qt.Vertical
-                                        from: -12; to: 12; stepSize: 1
-                                        value: root.eqData["b" + (index + 1)] || 0
-                                        Layout.fillHeight: true
-                                        onMoved: execEq(`$HOME/.config/hypr/scripts/quickshell/music/equalizer.sh set_band ${index + 1} ${Math.round(value)}`)
-                                    }
-                                    StyledText { 
-                                        text: ["31", "63", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"][index]
-                                        font.pixelSize: 8 * Appearance.effectiveScale
-                                        Layout.alignment: Qt.AlignHCenter
-                                    }
-                                }
-                            }
-                        }
-
-                        RowLayout {
-                            spacing: 8 * Appearance.effectiveScale
-                            Repeater {
-                                model: ["Flat", "Bass", "Treble", "Rock", "Pop"]
-                                delegate: Rectangle {
-                                    width: 50 * Appearance.effectiveScale; height: 24 * Appearance.effectiveScale
-                                    radius: 6 * Appearance.effectiveScale
-                                    color: root.eqData.preset === modelData ? Appearance.colors.colPrimaryContainer : Appearance.colors.colLayer2
-                                    StyledText { anchors.centerIn: parent; text: modelData; font.pixelSize: 10 * Appearance.effectiveScale }
-                                    MouseArea { anchors.fill: parent; onClicked: execEq(`$HOME/.config/hypr/scripts/quickshell/music/equalizer.sh preset ${modelData}`) }
-                                }
-                            }
-                        }
-                    }
+                MusicPopup {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                 }
 
                 // Tab 3: Schedule

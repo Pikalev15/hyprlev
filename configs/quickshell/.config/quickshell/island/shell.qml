@@ -15,7 +15,7 @@ ShellRoot {
 
     // Core Panels
     StatusBar {}
-    MusicHoverMenu {}
+    MediaNotchPopup {}
     Dashboard {
         id: dashboard
     }

@@ -47,6 +47,21 @@ Variants {
             onClicked: GlobalStates.dashboardOpen = false
         }
 
+        // Add hover handling
+        HoverHandler {
+            id: dashboardHoverHandler
+            onHoveredChanged: {
+                if (hovered) {
+                    GlobalStates.dashboardOpen = true;
+                } else {
+                    // Consider adding a timer-based delay here if required,
+                    // mirroring MediaNotchPopup's logic if needed.
+                    // For simplicity, we just trigger the state change directly.
+                    // GlobalStates.dashboardOpen = false;
+                }
+            }
+        }
+
         HyprlandFocusGrab {
             id: focusGrab
             active: GlobalStates.dashboardOpen && isActive

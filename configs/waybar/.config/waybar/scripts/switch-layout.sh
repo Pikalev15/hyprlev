@@ -35,9 +35,9 @@ catppuccin | Full | Glass | island | Japan | macos | minimal | minimal-2)
   echo "exec-once = waybar" >>"$AUTOSTART"
   ;;
 quickshell-bar)
-  quickshell -p ~/.config/quickshell/bar &
+  quickshell -p ~/.config/quickshell/island/shell.qml &
   disown
-  echo "exec-once = quickshell -p ~/.config/quickshell/bar" >>"$AUTOSTART"
+  echo "exec-once = quickshell -p ~/.config/quickshell/island/shell.qml" >>"$AUTOSTART"
   ;;
 quickshell-hypr)
   quickshell -p ~/.config/hypr/scripts/quickshell/Main.qml &
@@ -46,10 +46,10 @@ quickshell-hypr)
   disown
   echo "exec-once = quickshell -p ~/.config/hypr/scripts/quickshell/Main.qml & quickshell -p ~/.config/hypr/scripts/quickshell/TopBar.qml &" >>"$AUTOSTART"
   ;;
-quickshell-nandroid)
+quickshell-nandoroid)
   quickshell -p ~/.config/quickshell/nandoroid/shell.qml &
   disown
-  echo "exec-once = quickshell -p ~/.config/quickshell/nandroid/shell.qml &" >>"$AUTOSTART"
+  echo "exec-once = quickshell -p ~/.config/quickshell/nandoroid/shell.qml &" >>"$AUTOSTART"
   ;;
 *)
   notify-send "Layout" "Unknown layout: $LAYOUT" -u critical

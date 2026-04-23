@@ -23,7 +23,7 @@ Item {
     signal closed()
     property bool editMode: GlobalStates.quickSettingsEditMode
     implicitWidth: 800 * Appearance.effectiveScale
-    implicitHeight: 400 * Appearance.effectiveScale
+    implicitHeight: 800 * Appearance.effectiveScale
 
     focus: true
     Keys.onEscapePressed: close()

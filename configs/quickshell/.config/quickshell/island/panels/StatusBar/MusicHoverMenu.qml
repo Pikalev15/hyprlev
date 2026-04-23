@@ -8,7 +8,7 @@ import Quickshell.Wayland
 import Quickshell.Hyprland
 
 /**
- * Music menu that appears on island hover.
+ * Music menu that appears on island hover, using MediaNotchPopup logic.
  */
 Variants {
     id: root
@@ -34,23 +34,9 @@ Variants {
             right: true
         }
 
-        Item {
-            anchors.top: parent.top
-            anchors.topMargin: Appearance.sizes.statusBarHeight + 10 * Appearance.effectiveScale
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: musicWidget.width
-            height: musicWidget.height
-
-            MusicWidget {
-                id: musicWidget
-                
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: GlobalStates.islandHovered = true
-                    onExited: GlobalStates.islandHovered = false
-                }
-            }
+        // Use the MediaNotchPopup layout/content directly here
+        MediaNotchPopup {
+            modelData: panelWindow.modelData
         }
     }
 }

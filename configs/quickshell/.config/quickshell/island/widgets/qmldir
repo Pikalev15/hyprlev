@@ -23,6 +23,7 @@ WavyLine WavyLine.qml
 StyledProgressBar StyledProgressBar.qml
 StyledRectangularShadow StyledRectangularShadow.qml
 MaterialShapeWrappedMaterialSymbol MaterialShapeWrappedMaterialSymbol.qml
+MusicPopup MusicPopup.qml
 NotificationGroup NotificationGroup.qml
 NotificationPopupItem NotificationPopupItem.qml
 StyledComboBox StyledComboBox.qml
@@ -42,6 +43,7 @@ StyledListView StyledListView.qml
 PrivacyIndicator PrivacyIndicator.qml
 RecordIndicator RecordIndicator.qml
 CavaWidget CavaWidget.qml
+PerformanceGraph PerformanceGraph.qml
 RoundCorner RoundCorner.qml
 DesktopContextMenu DesktopContextMenu.qml
 SearchHandler SearchHandler.qml
@@ -53,3 +55,6 @@ ScreenshotOverlay ScreenshotOverlay.qml
 AccentPicker AccentPicker.qml
 AccentPickerOverlay AccentPickerOverlay.qml
 MusicWidget MusicWidget.qml
+MusicDashboard MusicDashboard.qml
+Scaler Scaler.qml
+MatugenColors MatugenColors.qml

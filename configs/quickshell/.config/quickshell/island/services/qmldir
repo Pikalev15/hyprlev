@@ -13,6 +13,7 @@ singleton SystemInfo SystemInfo.qml
 singleton Wallpapers Wallpapers.qml
 singleton Caffeine Caffeine.qml
 singleton Session Session.qml
+singleton SessionService SessionService.qml
 singleton Weather 1.0 Weather.qml
 singleton LauncherSearch LauncherSearch.qml
 singleton PomodoroService PomodoroService.qml
