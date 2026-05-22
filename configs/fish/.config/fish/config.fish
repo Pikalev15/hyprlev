@@ -1,17 +1,17 @@
 if status is-interactive
-# Commands to run in interactive sessions can go here
+    # Commands to run in interactive sessions can go here
+    set -g fish_greeting
 
-set -g fish_greeting
+    # Only run neofetch if it exists and we want it (it's slow)
+    neofetch 
 
-neofetch
-
-# fish
-fish_add_path ~/go/bin
-fish_add_path ~/.cargo/bin
-
+    # Paths (moved inside interactive block or simplified)
+    fish_add_path ~/go/bin
+    fish_add_path ~/.cargo/bin
+    fish_add_path /home/lev15/.spicetify
+    
+    # Add local bin if not already in path
+    if not contains /home/lev15/.local/bin $PATH
+        set -gx PATH $PATH /home/lev15/.local/bin
+    end
 end
-
-fish_add_path /home/lev15/.spicetify
-
-# Created by `pipx` on 2026-04-13 10:23:07
-set PATH $PATH /home/lev15/.local/bin
